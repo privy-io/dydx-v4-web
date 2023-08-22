@@ -48,21 +48,20 @@ class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
     } catch (error) {
       log('AbacusDydxChainQueries/connectNetwork', error);
     } finally {
-          // Dispatch custom event to notify other parts of the app that the network has been connected
-    const customEvent = new CustomEvent('abacus:connectNetwork', {
-      detail: {
-        indexerUrl,
-        indexerSocketUrl,
-        validatorUrl,
-        chainId,
-        faucetUrl,
-      },
-    });
+      // Dispatch custom event to notify other parts of the app that the network has been connected
+      const customEvent = new CustomEvent('abacus:connectNetwork', {
+        detail: {
+          indexerUrl,
+          indexerSocketUrl,
+          validatorUrl,
+          chainId,
+          faucetUrl,
+        },
+      });
 
-    globalThis.dispatchEvent(customEvent);
-    callback(JSON.stringify({ success: true }));
+      globalThis.dispatchEvent(customEvent);
+      callback(JSON.stringify({ success: true }));
     }
-    
   }
 
   parseToPrimitives<T>(x: T): T {
@@ -120,6 +119,7 @@ class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
           const equityTiers =
             await this.compositeClient?.validatorClient.get.getEquityTierLimitConfiguration();
           const parsedEquityTiers = this.parseToPrimitives(equityTiers);
+          console.log(parsedEquityTiers);
           callback(JSON.stringify(parsedEquityTiers));
           break;
         case QueryType.FeeTiers:
