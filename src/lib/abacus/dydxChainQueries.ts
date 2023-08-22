@@ -17,6 +17,7 @@ import {
 } from '@/constants/abacus';
 
 import { log } from '../telemetry';
+import { bytesToBigInt } from '../numbers';
 
 class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
   private compositeClient: CompositeClient | undefined;
@@ -33,18 +34,21 @@ class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
     faucetUrl: Nullable<string> | undefined,
     callback: (p0: Nullable<string>) => void
   ): Promise<void> {
-    this.compositeClient = await CompositeClient.connect(
-      new Network(
-        chainId,
-        new IndexerConfig(indexerUrl, indexerSocketUrl),
-        new ValidatorConfig(validatorUrl, chainId, {
-          broadcastPollIntervalMs: 3_000,
-          broadcastTimeoutMs: 60_000,
-        })
-      )
-    );
-
-    // Dispatch custom event to notify other parts of the app that the network has been connected
+    try {
+      this.compositeClient = await CompositeClient.connect(
+        new Network(
+          chainId,
+          new IndexerConfig(indexerUrl, indexerSocketUrl),
+          new ValidatorConfig(validatorUrl, chainId, {
+            broadcastPollIntervalMs: 3_000,
+            broadcastTimeoutMs: 60_000,
+          })
+        )
+      );
+    } catch (error) {
+      log('AbacusDydxChainQueries/connectNetwork', error);
+    } finally {
+          // Dispatch custom event to notify other parts of the app that the network has been connected
     const customEvent = new CustomEvent('abacus:connectNetwork', {
       detail: {
         indexerUrl,
@@ -57,6 +61,8 @@ class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
 
     globalThis.dispatchEvent(customEvent);
     callback(JSON.stringify({ success: true }));
+    }
+    
   }
 
   parseToPrimitives<T>(x: T): T {
@@ -66,6 +72,10 @@ class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
 
     if (Array.isArray(x)) {
       return x.map((item) => this.parseToPrimitives(item)) as T;
+    }
+
+    if (x instanceof Uint8Array) {
+      return bytesToBigInt(x).toString() as T;
     }
 
     if (Long.isLong(x)) {
@@ -105,6 +115,12 @@ class DydxChainQueries implements AbacusDydxChainQueriesProtocol {
             params.chainId
           );
           callback(JSON.stringify({ url: optimalNode }));
+          break;
+        case QueryType.EquityTiers:
+          const equityTiers =
+            await this.compositeClient?.validatorClient.get.getEquityTierLimitConfiguration();
+          const parsedEquityTiers = this.parseToPrimitives(equityTiers);
+          callback(JSON.stringify(parsedEquityTiers));
           break;
         case QueryType.FeeTiers:
           const feeTiers = await this.compositeClient?.validatorClient.get.getFeeTiers();
