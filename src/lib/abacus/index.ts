@@ -36,6 +36,7 @@ import AbacusStateNotifier from './stateNotification';
 import AbacusLocalizer from './localizer';
 import AbacusFormatter from './formatter';
 import AbacusThreading from './threading';
+import AbacusTracking from './tracking';
 import AbacusFileSystem, { ENDPOINTS_PATH } from './filesystem';
 import { LocaleSeparators } from '../numbers';
 class AbacusStateManager {
@@ -59,7 +60,7 @@ class AbacusStateManager {
       new AbacusRest(),
       this.websocket,
       new AbacusChainTransaction(),
-      null,
+      new AbacusTracking(),
       new AbacusThreading(),
       new CoroutineTimer(),
       new AbacusFileSystem()
