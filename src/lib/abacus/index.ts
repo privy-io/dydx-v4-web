@@ -154,6 +154,7 @@ class AbacusStateManager {
 
   // ------ Set Data ------ //
   setStore = (store: RootStore) => {
+    this.store = store;
     this.stateNotifier.setStore(store);
   };
 
