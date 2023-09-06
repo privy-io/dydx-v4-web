@@ -92,7 +92,7 @@ const useNotificationsContext = () => {
   for (const { type, useTrigger } of notificationTypes)
     useTrigger({
       trigger: useCallback(
-        (id, displayData, updateKey, isNew = true) => {
+        ({ id, displayData, updateKey, isNew = true }) => {
           const key = getKey({ type, id });
 
           const notification = notifications[key];
@@ -182,28 +182,23 @@ const useNotificationsContext = () => {
           const iconUrl =
             displayData.icon && (await renderSvgToDataUrl(displayData.icon).catch(() => undefined));
 
-          const pushNotification = new globalThis.Notification(displayData.title, {
-            renotify: true,
-            tag: getKey(notification),
-            data: notification,
-            body: displayData.description,
-            icon: iconUrl ?? '/favicon.svg',
-            badge: iconUrl ?? '/favicon.svg',
-            image: iconUrl ?? '/favicon.svg',
-            vibrate: displayData.toastSensitivity === 'foreground',
-            requireInteraction: displayData.toastDuration === Infinity,
-            // actions: [
-            //   {
-            //     action: displayData.actionDescription,
-            //     title: displayData.actionDescription,
-            //   }
-            // ].slice(0, globalThis.Notification.maxActions),
-          });
+          if (displayData.title) {
+            const pushNotification = new globalThis.Notification(displayData.title, {
+              renotify: true,
+              tag: getKey(notification),
+              data: notification,
+              body: displayData.description ?? '',
+              icon: (iconUrl as string) ?? '/favicon.svg',
+              badge: (iconUrl as string) ?? '/favicon.svg',
+              image: (iconUrl as string) ?? '/favicon.svg',
+              requireInteraction: displayData.toastDuration === Infinity,
+            });
 
-          pushNotification.addEventListener('click', () => {
-            onNotificationAction(notification);
-            markSeen(notification);
-          });
+            pushNotification.addEventListener('click', () => {
+              onNotificationAction(notification);
+              markSeen(notification);
+            });
+          }
         }
 
       setPushNotificationsLastUpdated(Date.now());

@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
-
 import { groupBy } from 'lodash';
+import styled from 'styled-components';
 
+import { STRING_KEYS } from '@/constants/localization';
 import { type Notification, NotificationStatus } from '@/constants/notifications';
-
+import { useStringGetter } from '@/hooks';
 import { useNotifications } from '@/hooks/useNotifications';
+import { CloseIcon } from '@/icons';
 
 import { Button } from '@/components/Button';
 import { ButtonAction, ButtonSize } from '@/constants/buttons';
@@ -13,9 +15,7 @@ import { DialogPlacement } from '@/components/Dialog';
 import { Output, OutputType } from '@/components/Output';
 import { IconButton } from '@/components/IconButton';
 import { Toolbar } from '@/components/Toolbar';
-import { CloseIcon } from '@/icons';
 
-import styled from 'styled-components';
 import { layoutMixins } from '@/styles/layoutMixins';
 
 type ElementProps = {
@@ -27,6 +27,8 @@ export const NotificationsMenu = ({
   slotTrigger,
   placement = DialogPlacement.Sidebar,
 }: ElementProps) => {
+  const stringGetter = useStringGetter();
+
   const {
     notifications,
     getDisplayData,
@@ -69,7 +71,7 @@ export const NotificationsMenu = ({
         .map(([status, notifications]) => ({
           group: status,
           groupLabel: {
-            [NotificationStatus.Triggered]: 'New',
+            [NotificationStatus.Triggered]: stringGetter({ key: STRING_KEYS.NEW }),
             // [NotificationStatus.Updated]: 'Updates',
             [NotificationStatus.Seen]: 'Seen',
             [NotificationStatus.Cleared]: 'Archived',
@@ -135,7 +137,7 @@ export const NotificationsMenu = ({
       isOpen={isMenuOpen || placement === DialogPlacement.Inline}
       setIsOpen={setIsMenuOpen}
       items={items}
-      title="Notifications"
+      title={stringGetter({ key: STRING_KEYS.NOTIFICATIONS })}
       slotTrigger={
         <$TriggerContainer>
           {slotTrigger}
@@ -168,7 +170,7 @@ export const NotificationsMenu = ({
               ),
             }}
           >
-            Clear All
+            {stringGetter({ key: STRING_KEYS.CLEAR })}
           </Button>
         </$FooterToolbar>
       }

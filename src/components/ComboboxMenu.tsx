@@ -80,8 +80,6 @@ export const ComboboxMenu = <MenuItemValue extends string, MenuGroupValue extend
             {group.items.map((item) => (
               <Fragment key={item.value}>
                 <Styled.Item
-                  // value={item.value} // search by both value and textContent
-                  // value={[group.groupLabel, item.label, item.tag].filter(Boolean).join('|')} // exclude item.value from searchable terms (not guaranteed to be unique)
                   value={[group.groupLabel, item.value, item.description, item.label, item.tag]
                     .filter(Boolean)
                     .join('|')}
@@ -116,8 +114,6 @@ export const ComboboxMenu = <MenuItemValue extends string, MenuGroupValue extend
                   item.subitems?.map((subitem) => (
                     <Fragment key={subitem.value}>
                       <Styled.Item
-                        // value={subitem.value} // search by both value and textContent
-                        // value={[group.groupLabel, item.label, subitem.label, subitem.tag].filter(Boolean).join('|')}
                         value={[
                           group.groupLabel,
                           item.value,

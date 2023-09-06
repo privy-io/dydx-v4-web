@@ -1,4 +1,5 @@
-import { StatusResponse } from "@0xsquid/sdk";
+import type { ReactNode } from 'react';
+import type { StatusResponse } from '@0xsquid/sdk';
 
 /** implemented in useNotificationTypes */
 export enum NotificationType {
@@ -18,26 +19,31 @@ export type NotificationTypeConfig<
 
   /** React hook to trigger notifications based on app state */
   useTrigger: (_: {
-    trigger: (
+    trigger: ({
+      id,
+      displayData,
+      updateKey,
+      isNew,
+    }: {
       /** Unique ID for the triggered notification */
-      id: _NotificationId,
+      id: _NotificationId;
 
       /** Display data for the triggered notification */
-      displayData: NotificationDisplayData,
+      displayData: NotificationDisplayData;
 
       /**
        * JSON-serializable key.
        * Re-triggers the notification if passed a different value from the last trigger() call (even from a previous browser session).
        * Suggested usage: data dependency array
        */
-      updateKey?: NotificationUpdateKey,
+      updateKey?: NotificationUpdateKey;
 
       /**
        * @param true (default): Notification initialized with status NotificationStatus.Triggered
        * @param false: Notification initialized with status NotificationStatus.Cleared
        */
-      isNew?: boolean
-    ) => void;
+      isNew?: boolean;
+    }) => void;
 
     lastUpdated: number;
   }) => void;
@@ -79,15 +85,15 @@ export type Notifications = Record<NotificationId, Notification<any>>;
 
 /** Notification display data derived from app state at runtime. */
 export type NotificationDisplayData = {
-  icon?: React.ReactNode;
+  icon?: React.ReactElement<any, 'svg'>;
 
   title?: string;
 
-  description?: React.ReactNode;
+  description?: ReactNode;
 
-  customContent?: React.ReactNode;
+  customContent?: ReactNode;
 
-  customMenuContent?: React.ReactNode;
+  customMenuContent?: ReactNode;
 
   actionDescription?: string;
 

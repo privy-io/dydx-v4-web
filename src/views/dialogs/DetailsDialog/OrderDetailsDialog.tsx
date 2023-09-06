@@ -7,7 +7,7 @@ import { layoutMixins } from '@/styles/layoutMixins';
 
 import { AbacusOrderStatus, AbacusOrderTypes, type Nullable } from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
-import { STRING_KEYS } from '@/constants/localization';
+import { STRING_KEYS, StringKey } from '@/constants/localization';
 
 import { AssetIcon } from '@/components/AssetIcon';
 import { Button } from '@/components/Button';
@@ -38,6 +38,9 @@ type ElementProps = {
   setIsOpen: (open: boolean) => void;
 };
 
+const isStringKey = (key: Nullable<string>): key is StringKey =>
+  key != null && STRING_KEYS.hasOwnProperty(key);
+
 export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
   const stringGetter = useStringGetter();
   const dispatch = useDispatch();
@@ -47,7 +50,7 @@ export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
   const { cancelOrder } = useSubaccount();
 
   const {
-    asset = {},
+    asset,
     cancelReason,
     createdAtMilliseconds,
     expiresAtMilliseconds,
@@ -57,7 +60,7 @@ export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
     price,
     reduceOnly,
     totalFilled,
-    resources = {},
+    resources,
     size,
     status,
     stepSizeDecimals,
@@ -109,9 +112,9 @@ export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
         <Styled.Row>
           <Styled.StatusIcon iconName={statusIcon} color={statusIconColor} />
           <Styled.Status>
-            {statusStringKey
+            {isStringKey(statusStringKey)
               ? stringGetter({ key: statusStringKey })
-              : resources.statusStringKey
+              : isStringKey(resources.statusStringKey)
               ? stringGetter({ key: resources.statusStringKey })
               : undefined}
           </Styled.Status>
@@ -121,7 +124,9 @@ export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
     {
       key: 'cancel-reason',
       label: stringGetter({ key: STRING_KEYS.CANCEL_REASON }),
-      value: cancelReason ? stringGetter({ key: STRING_KEYS[cancelReason] }) : undefined,
+      value: isStringKey(cancelReason)
+        ? stringGetter({ key: STRING_KEYS[cancelReason] })
+        : undefined,
     },
     {
       key: 'amount',
