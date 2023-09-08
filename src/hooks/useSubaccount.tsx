@@ -100,7 +100,7 @@ export const useSubaccountContext = ({ localDydxWallet }: { localDydxWallet?: Lo
         subaccountClient: SubaccountClient;
         assetId?: number;
         amount: Long;
-      }) => await compositeClient?.validatorClient.post.deposit(subaccountClient, assetId, amount),
+      }) => await compositeClient?.validatorClient.post.deposit(subaccountClient, assetId, amount, false),
 
       withdrawFromSubaccount: async ({
         subaccountClient,
