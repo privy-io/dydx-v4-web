@@ -45,11 +45,15 @@ describe('getStringsForDateTimeDiff', () => {
 
 describe('getStringsForTimeInterval', () => {
   it.each([
-    [Duration.fromObject({ months: 2 }), '2', 'MONTHS_ABBREVIATED'],
-    [Duration.fromObject({ weeks: 3, days: 2 }), '3', 'WEEKS_ABBREVIATED'],
-    [Duration.fromObject({ days: 5, hours: 12 }), '6', 'DAYS_ABBREVIATED'],
-    [Duration.fromObject({ hours: 8, minutes: 30 }), '9', 'HOURS_ABBREVIATED'],
-    [Duration.fromObject({ minutes: 45 }), '45', 'MINUTES_ABBREVIATED'],
+    [Duration.fromObject({ months: 2 }), '2', 'APP.GENERAL.TIME_STRINGS.MONTHS_ABBREVIATED'],
+    [Duration.fromObject({ weeks: 3, days: 2 }), '3', 'APP.GENERAL.TIME_STRINGS.WEEKS_ABBREVIATED'],
+    [Duration.fromObject({ days: 5, hours: 12 }), '6', 'APP.GENERAL.TIME_STRINGS.DAYS_ABBREVIATED'],
+    [
+      Duration.fromObject({ hours: 8, minutes: 30 }),
+      '9',
+      'APP.GENERAL.TIME_STRINGS.HOURS_ABBREVIATED',
+    ],
+    [Duration.fromObject({ minutes: 45 }), '45', 'APP.GENERAL.TIME_STRINGS.MINUTES_ABBREVIATED'],
   ])(
     'returns the correct timeString and unitStringKey',
     (timeInterval, expectedTimeString, expectedUnitStringKey) => {

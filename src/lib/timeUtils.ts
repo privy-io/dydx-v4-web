@@ -10,7 +10,7 @@ export const getTimestamp = (value?: BigNumberish | null) =>
       ? value
       : typeof value === 'string'
       ? new Date(value).getTime()
-      : new Date(value.toString()).getTime()
+      : new Date(value.toNumber()).getTime()
     : undefined;
 
 export const getStringsForDateTimeDiff = (dateTime: DateTime) => {
@@ -77,4 +77,4 @@ export const formatSeconds = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return `${getTimeString(minutes)}:${getTimeString(remainingSeconds)}`;
-}
+};
