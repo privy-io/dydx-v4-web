@@ -26,7 +26,6 @@ import { useAccounts, useStringGetter, useTokenConfigs } from '@/hooks';
 import { getOnboardingState } from '@/state/accountSelectors';
 import { openDialog } from '@/state/dialogs';
 
-import abacusStateManager from '@/lib/abacus';
 import { isTruthy } from '@/lib/isTruthy';
 import { truncateAddress } from '@/lib/wallet';
 

@@ -24,6 +24,7 @@ import { DYDXBalancePanel } from './DYDXBalancePanel';
 import { MigratePanel } from './MigratePanel';
 import { LaunchIncentivesPanel } from './LaunchIncentivesPanel';
 import { RewardsHelpPanel } from './RewardsHelpPanel';
+import { TradingRewardsSummaryPanel } from './TradingRewardsSummaryPanel';
 
 const RewardsPage = () => {
   const dispatch = useDispatch();
@@ -50,50 +51,49 @@ const RewardsPage = () => {
           {stringGetter({ key: STRING_KEYS.TRADING_REWARDS })}
         </Styled.MobileHeader>
       )}
-      {import.meta.env.VITE_V3_TOKEN_ADDRESS && isNotTablet && <MigratePanel />}
+      <Styled.GridLayout>
+        {import.meta.env.VITE_V3_TOKEN_ADDRESS && isNotTablet && <Styled.MigratePanel />}
 
-      {isTablet ? (
-        <LaunchIncentivesPanel />
-      ) : (
-        <Styled.PanelRowIncentivesAndBalance>
-          <LaunchIncentivesPanel />
-          <DYDXBalancePanel />
-        </Styled.PanelRowIncentivesAndBalance>
-      )}
+        <Styled.TradingRewardsColumn>
+          <TradingRewardsSummaryPanel />
+          {isTablet && <Styled.HelpPanel slotHeader={<Styled.Title>Help</Styled.Title>} />}
+          <Styled.Panel slotHeader={<Styled.Title>Reward History</Styled.Title>} />
+        </Styled.TradingRewardsColumn>
 
-      <Styled.PanelRow>
-        <Styled.Panel
-          slotHeaderContent={
-            <Styled.Title>{stringGetter({ key: STRING_KEYS.GOVERNANCE })}</Styled.Title>
-          }
-          slotRight={panelArrow}
-          onClick={() => dispatch(openDialog({ type: DialogTypes.ExternalNavKeplr }))}
-        >
-          <Styled.Description>
-            {stringGetter({ key: STRING_KEYS.GOVERNANCE_DESCRIPTION })}
-            <Link href={governanceLearnMore} onClick={(e) => e.stopPropagation()}>
-              {stringGetter({ key: STRING_KEYS.LEARN_MORE })} →
-            </Link>
-          </Styled.Description>
-        </Styled.Panel>
+        {isNotTablet && (
+          <Styled.OtherColumn>
+            <Styled.Panel
+              slotHeader={
+                <Styled.Title>{stringGetter({ key: STRING_KEYS.GOVERNANCE })}</Styled.Title>
+              }
+              slotRight={panelArrow}
+              onClick={() => dispatch(openDialog({ type: DialogTypes.ExternalNavKeplr }))}
+            >
+              <Styled.Description>
+                {stringGetter({ key: STRING_KEYS.GOVERNANCE_DESCRIPTION })}
+                <Link href={governanceLearnMore} onClick={(e) => e.stopPropagation()}>
+                  {stringGetter({ key: STRING_KEYS.LEARN_MORE })} →
+                </Link>
+              </Styled.Description>
+            </Styled.Panel>
 
-        <Styled.Panel
-          slotHeaderContent={
-            <Styled.Title>{stringGetter({ key: STRING_KEYS.STAKING })}</Styled.Title>
-          }
-          slotRight={panelArrow}
-          onClick={() => dispatch(openDialog({ type: DialogTypes.ExternalNavKeplr }))}
-        >
-          <Styled.Description>
-            {stringGetter({ key: STRING_KEYS.STAKING_DESCRIPTION })}
-            <Link href={stakingLearnMore} onClick={(e) => e.stopPropagation()}>
-              {stringGetter({ key: STRING_KEYS.LEARN_MORE })} →
-            </Link>
-          </Styled.Description>
-        </Styled.Panel>
-      </Styled.PanelRow>
+            <Styled.Panel
+              slotHeader={<Styled.Title>{stringGetter({ key: STRING_KEYS.STAKING })}</Styled.Title>}
+              slotRight={panelArrow}
+              onClick={() => dispatch(openDialog({ type: DialogTypes.ExternalNavKeplr }))}
+            >
+              <Styled.Description>
+                {stringGetter({ key: STRING_KEYS.STAKING_DESCRIPTION })}
+                <Link href={stakingLearnMore} onClick={(e) => e.stopPropagation()}>
+                  {stringGetter({ key: STRING_KEYS.LEARN_MORE })} →
+                </Link>
+              </Styled.Description>
+            </Styled.Panel>
 
-      <RewardsHelpPanel />
+            <Styled.Panel slotHeader={<Styled.Title>Help</Styled.Title>} />
+          </Styled.OtherColumn>
+        )}
+      </Styled.GridLayout>
     </Styled.Page>
   );
 };
@@ -104,7 +104,6 @@ const Styled: Record<string, AnyStyledComponent> = {};
 
 Styled.Page = styled.div`
   ${layoutMixins.contentContainerPage}
-  gap: 1.5rem;
   padding: 2rem;
   align-items: center;
 
@@ -138,6 +137,54 @@ Styled.MobileHeader = styled.header`
 
 Styled.Panel = styled(Panel)`
   height: fit-content;
+
+  font: var(--font-large-medium);
+  color: var(--color-text-2);
+  background-color: var(--color-layer-2);
+`;
+
+Styled.GridLayout = styled.div`
+  --gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--gap);
+
+  > * {
+    gap: var(--gap);
+  }
+
+  grid-template-areas:
+    'migrate migrate'
+    'incentives balance'
+    'rewards other';
+
+  @media ${breakpoints.tablet} {
+    --gap: 1rem;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'incentives'
+      'rewards';
+  }
+`;
+
+Styled.MigratePanel = styled(MigratePanel)`
+  grid-area: migrate;
+`;
+
+Styled.LaunchIncentivesPanel = styled(LaunchIncentivesPanel)`
+  grid-area: incentives;
+`;
+Styled.DYDXBalancePanel = styled(DYDXBalancePanel)`
+  grid-area: balance;
+`;
+
+Styled.TradingRewardsColumn = styled.div`
+  grid-area: rewards;
+  ${layoutMixins.flexColumn}
+`;
+Styled.OtherColumn = styled.div`
+  grid-area: other;
+  ${layoutMixins.flexColumn}
 `;
 
 Styled.Title = styled.h3`
@@ -156,20 +203,6 @@ Styled.Description = styled.div`
       content: ' ';
     }
   }
-`;
-
-Styled.PanelRow = styled.div`
-  ${layoutMixins.gridEqualColumns}
-  gap: 1.5rem;
-
-  @media ${breakpoints.tablet} {
-    grid-auto-flow: row;
-    grid-template-columns: 1fr;
-  }
-`;
-
-Styled.PanelRowIncentivesAndBalance = styled(Styled.PanelRow)`
-  grid-template-columns: 2fr 1fr;
 `;
 
 Styled.IconButton = styled(IconButton)`
