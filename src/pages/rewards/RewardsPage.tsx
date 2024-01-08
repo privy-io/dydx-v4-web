@@ -25,7 +25,7 @@ import { MigratePanel } from './MigratePanel';
 import { LaunchIncentivesPanel } from './LaunchIncentivesPanel';
 import { RewardsHelpPanel } from './RewardsHelpPanel';
 import { TradingRewardsSummaryPanel } from './TradingRewardsSummaryPanel';
-import { RewardsHelpPanel } from './RewardsHelpPanel';
+import { RewardHistoryPanel } from './RewardHistoryPanel';
 
 const RewardsPage = () => {
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ const RewardsPage = () => {
         <Styled.TradingRewardsColumn>
           <TradingRewardsSummaryPanel />
           {isTablet && <RewardsHelpPanel />}
-          <Styled.Panel slotHeader={<Styled.Title>Reward History</Styled.Title>} />
+          <RewardHistoryPanel/>
         </Styled.TradingRewardsColumn>
 
         {isNotTablet && (
@@ -188,6 +188,16 @@ Styled.TradingRewardsColumn = styled.div`
 Styled.OtherColumn = styled.div`
   grid-area: other;
   ${layoutMixins.flexColumn}
+`;
+
+Styled.RewardHistoryHeader = styled.div`
+  h3 {
+    font: var(--font-medium-book);
+    color: var(--color-text-2);
+  }
+
+  padding: 1rem 1.5rem 0;
+  margin-bottom: -0.5rem;
 `;
 
 Styled.Title = styled.h3`
