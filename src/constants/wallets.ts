@@ -52,7 +52,7 @@ type WalletConnectionTypeConfig = {
   wagmiConnectorId?: string;
 };
 
-export const walletConnectionTypes: Record<WalletConnectionType, WalletConnectionTypeConfig> = {
+export const WALLET_CONNECTION_TYPES: Record<WalletConnectionType, WalletConnectionTypeConfig> = {
   [WalletConnectionType.CoinbaseWalletSdk]: {
     name: 'Coinbase Wallet SDK',
     wagmiConnectorId: 'coinbaseWallet',
@@ -110,7 +110,7 @@ export const WALLET_CONNECT_EXPLORER_RECOMMENDED_IDS = Object.values(
   WALLET_CONNECT_EXPLORER_RECOMMENDED_WALLETS
 );
 
-type WalletConfig = {
+export type WalletConfig = {
   type: WalletType;
   stringKey: string;
   icon: string;
@@ -272,6 +272,17 @@ export type WithInjectedWeb3Provider = {
 export type WalletConnection = {
   type: WalletConnectionType;
   provider?: ExternalProvider;
+};
+
+export type WalletConnectConfig = {
+  client: {
+    name: string;
+    description: string;
+    iconUrl: string;
+  };
+  v2: {
+    projectId: string;
+  };
 };
 
 // dYdX Chain wallets

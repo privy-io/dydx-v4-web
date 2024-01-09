@@ -1,8 +1,9 @@
 import { createContext, useContext, useCallback, useEffect, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { LOCAL_STORAGE_VERSIONS, LocalStorageKey } from '@/constants/localStorage';
 import { type TransferNotifcation } from '@/constants/notifications';
+import { QueryKeys } from '@/constants/queries';
 import { useAccounts } from '@/hooks/useAccounts';
 
 import { fetchSquidStatus, STATUS_ERROR_GRACE_PERIOD } from '@/lib/squid';
@@ -68,8 +69,8 @@ const useLocalNotificationsContext = () => {
     [transferNotifications]
   );
 
-  useQuery({
-    queryKey: 'getTransactionStatus',
+  const { data: newTransferNotifications } = useQuery({
+    queryKey: [QueryKeys.TRANSACTION_STATUS],
     queryFn: async () => {
       const processTransferNotifications = async (transferNotifications: TransferNotifcation[]) => {
         const newTransferNotifications = await Promise.all(
@@ -84,10 +85,11 @@ const useLocalNotificationsContext = () => {
               status: currentStatus,
             } = transferNotification;
 
-            // @ts-ignore status.errors is not in the type definition but can be returned
-            // also error can some time come back as an empty object so we need to ignore for that
-            const hasErrors = !!currentStatus?.errors || 
-                 (currentStatus?.error && Object.keys(currentStatus.error).length !== 0);
+            const hasErrors =
+              // @ts-ignore status.errors is not in the type definition but can be returned
+              // also error can some time come back as an empty object so we need to ignore for that
+              !!currentStatus?.errors ||
+              (currentStatus?.error && Object.keys(currentStatus.error).length !== 0);
 
             if (
               !hasErrors &&
@@ -95,11 +97,14 @@ const useLocalNotificationsContext = () => {
                 currentStatus?.squidTransactionStatus === 'ongoing')
             ) {
               try {
-                const status = await fetchSquidStatus({
-                  transactionId: txHash,
-                  toChainId,
-                  fromChainId,
-                }, isCctp);
+                const status = await fetchSquidStatus(
+                  {
+                    transactionId: txHash,
+                    toChainId,
+                    fromChainId,
+                  },
+                  isCctp
+                );
 
                 if (status) {
                   transferNotification.status = status;
@@ -121,11 +126,17 @@ const useLocalNotificationsContext = () => {
 
         return newTransferNotifications;
       };
+
       const newTransferNotifications = await processTransferNotifications(transferNotifications);
-      setTransferNotifications(newTransferNotifications);
+      return newTransferNotifications;
     },
     refetchInterval: TRANSFER_STATUS_FETCH_INTERVAL,
   });
+
+  useEffect(() => {
+    if (!newTransferNotifications) return;
+    setTransferNotifications(newTransferNotifications);
+  }, [newTransferNotifications]);
 
   return {
     transferNotifications,

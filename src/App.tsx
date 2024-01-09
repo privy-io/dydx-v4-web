@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import styled, { AnyStyledComponent, css } from 'styled-components';
-import { WagmiConfig } from 'wagmi';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GrazProvider } from 'graz';
 
 import { AppRoute, DEFAULT_TRADE_ROUTE } from '@/constants/routes';
@@ -120,9 +120,9 @@ const wrapProvider = (Component: React.ComponentType<any>, props?: any) => {
 };
 
 const providers = [
+  wrapProvider(WagmiProvider, { config }),
   wrapProvider(QueryClientProvider, { client: queryClient }),
   wrapProvider(GrazProvider),
-  wrapProvider(WagmiConfig, { config }),
   wrapProvider(LocaleProvider),
   wrapProvider(RestrictionProvider),
   wrapProvider(DydxProvider),

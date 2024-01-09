@@ -3,18 +3,17 @@ import styled, { AnyStyledComponent } from 'styled-components';
 import { useDispatch } from 'react-redux';
 
 import { AlertType } from '@/constants/alerts';
-import { STRING_KEYS } from '@/constants/localization';
-
-import { WalletType, wallets } from '@/constants/wallets';
 import { ButtonAction, ButtonSize } from '@/constants/buttons';
+import { STRING_KEYS } from '@/constants/localization';
+import { WalletType, wallets } from '@/constants/wallets';
+import { useStringGetter, useURLConfigs } from '@/hooks';
+import { useDisplayedWallets } from '@/hooks/useDisplayedWallets';
+import { useWalletConnection } from '@/hooks/useWalletConnection';
 
 import { AlertMessage } from '@/components/AlertMessage';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { Link } from '@/components/Link';
-
-import { useAccounts, useStringGetter, useURLConfigs } from '@/hooks';
-import { useDisplayedWallets } from '@/hooks/useDisplayedWallets';
 
 import { breakpoints } from '@/styles';
 import { layoutMixins } from '@/styles/layoutMixins';
@@ -25,7 +24,7 @@ export const ChooseWallet = () => {
 
   const displayedWallets = useDisplayedWallets();
 
-  const { selectWalletType, selectedWalletType, selectedWalletError } = useAccounts();
+  const { selectWalletType, selectedWalletType, selectedWalletError } = useWalletConnection();
 
   return (
     <>

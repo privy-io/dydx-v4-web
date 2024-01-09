@@ -39,7 +39,6 @@ const useAccountsContext = () => {
     walletConnectionType,
     selectWalletType,
     selectedWalletType,
-    selectedWalletError,
     evmAddress,
     signerWagmi,
     publicClientWagmi,
@@ -300,9 +299,7 @@ const useAccountsContext = () => {
     walletConnectionType,
 
     // Wallet selection
-    selectWalletType,
     selectedWalletType,
-    selectedWalletError,
 
     // Wallet connection (EVM)
     evmAddress,

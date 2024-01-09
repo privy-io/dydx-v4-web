@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { UseSwitchChainReturnType, useAccount, useSwitchChain } from 'wagmi';
 
 export const useMatchingEvmNetwork = ({
   chainId,
@@ -8,10 +8,10 @@ export const useMatchingEvmNetwork = ({
 }: {
   chainId?: string | number;
   switchAutomatically?: boolean;
-  onError?: (error: Error) => void;
+  onError?: Parameters<UseSwitchChainReturnType['switchChainAsync']>[1]['onError'];
 }) => {
-  const { chain } = useNetwork();
-  const { isLoading, switchNetworkAsync } = useSwitchNetwork({ onError });
+  const { chain } = useAccount();
+  const { switchChainAsync, isPending } = useSwitchChain();
 
   // If chainId is not a number, we can assume it is a non EVM compatible chain
   const isMatchingNetwork = useMemo(
@@ -21,7 +21,14 @@ export const useMatchingEvmNetwork = ({
 
   const matchNetwork = useCallback(async () => {
     if (!isMatchingNetwork) {
-      await switchNetworkAsync?.(Number(chainId));
+      await switchChainAsync?.(
+        {
+          chainId: Number(chainId),
+        },
+        {
+          onError,
+        }
+      );
     }
   }, [chainId, chain]);
 
@@ -34,6 +41,6 @@ export const useMatchingEvmNetwork = ({
   return {
     isMatchingNetwork,
     matchNetwork,
-    isSwitchingNetwork: isLoading,
+    isSwitchingNetwork: isPending,
   };
 };

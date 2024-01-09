@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import styled, { AnyStyledComponent } from 'styled-components';
 
 import { STRING_KEYS } from '@/constants/localization';
 import { ButtonAction } from '@/constants/buttons';
 import { DialogTypes } from '@/constants/dialogs';
+import { QueryKeys } from '@/constants/queries';
 
 import breakpoints from '@/styles/breakpoints';
 import { useAccounts, useBreakpoints, useStringGetter } from '@/hooks';
@@ -68,16 +69,23 @@ const EstimatedRewards = () => {
   const stringGetter = useStringGetter();
   const { dydxAddress } = useAccounts();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, status, error } = useQuery({
     enabled: !!dydxAddress,
-    queryKey: `launch_incentives_rewards_${dydxAddress ?? ''}`,
+    queryKey: [QueryKeys.LAUNCH_INCENTIVES, dydxAddress, SEASON_NUMBER],
     queryFn: async () => {
       if (!dydxAddress) return undefined;
-      const resp = await fetch(`https://cloud.chaoslabs.co/query/api/dydx/points/${dydxAddress}?n=${SEASON_NUMBER}`);
+      const resp = await fetch(
+        `https://cloud.chaoslabs.co/query/api/dydx/points/${dydxAddress}?n=${SEASON_NUMBER}`
+      );
       return (await resp.json())?.incentivePoints;
     },
-    onError: (error: Error) => log('LaunchIncentives/fetchPoints', error),
   });
+
+  useEffect(() => {
+    if (status === 'error') {
+      log('LaunchIncentives/fetchPoints', error);
+    }
+  }, [status]);
 
   return (
     <Styled.EstimatedRewardsCard>

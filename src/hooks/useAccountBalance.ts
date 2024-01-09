@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
-import { useBalance } from 'wagmi';
+import { useBalance, useBlockNumber } from 'wagmi';
 import { StargateClient } from '@cosmjs/stargate';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 
 import { ENVIRONMENT_CONFIG_MAP } from '@/constants/networks';
+import { QueryKeys } from '@/constants/queries';
 import { EvmAddress } from '@/constants/wallets';
 
 import { convertBech32Address } from '@/lib/addressUtils';
@@ -52,14 +53,26 @@ export const useAccountBalance = ({
   const evmChainId = Number(ENVIRONMENT_CONFIG_MAP[selectedNetwork].ethereumChainId);
   const stakingBalances = useSelector(getStakingBalances, shallowEqual);
 
-  const evmQuery = useBalance({
-    enabled: Boolean(!isCosmosChain && addressOrDenom?.startsWith('0x')),
+  const queryClient = useQueryClient();
+  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const {
+    data: evmQuery,
+    status: evmBalanceStatus,
+    fetchStatus: evmBalanceFetchStatus,
+    queryKey,
+  } = useBalance({
+    query: {
+      enabled: Boolean(!isCosmosChain && addressOrDenom?.startsWith('0x')),
+    },
     address: evmAddress,
     chainId: typeof chainId === 'number' ? chainId : Number(evmChainId),
     token:
       addressOrDenom === CHAIN_DEFAULT_TOKEN_ADDRESS ? undefined : (addressOrDenom as EvmAddress),
-    watch: true,
   });
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey });
+  }, [blockNumber]);
 
   const cosmosQueryFn = useCallback(async () => {
     if (dydxAddress && bech32AddrPrefix && rpc && addressOrDenom) {
@@ -78,7 +91,7 @@ export const useAccountBalance = ({
 
   const cosmosQuery = useQuery({
     enabled: Boolean(isCosmosChain && dydxAddress && bech32AddrPrefix && rpc && addressOrDenom),
-    queryKey: `accountBalances_${chainId}_${addressOrDenom}`,
+    queryKey: [QueryKeys.ACCOUNT_BALANCE, chainId, addressOrDenom],
     queryFn: cosmosQueryFn,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
@@ -87,8 +100,11 @@ export const useAccountBalance = ({
     staleTime: 10_000,
   });
 
-  const { formatted: evmBalance } = evmQuery.data || {};
-  const balance = isCosmosChain ? cosmosQuery.data : evmBalance;
+  const balance = isCosmosChain
+    ? cosmosQuery.data
+    : evmQuery
+    ? formatUnits(evmQuery?.value, evmQuery?.decimals)
+    : undefined;
 
   const nativeTokenCoinBalance = balances?.[chainTokenDenom];
   const nativeTokenBalance = MustBigNumber(nativeTokenCoinBalance?.amount);
@@ -104,7 +120,7 @@ export const useAccountBalance = ({
     nativeTokenBalance,
     nativeStakingBalance,
     usdcBalance,
-    queryStatus: isCosmosChain ? cosmosQuery.status : evmQuery.status,
-    isQueryFetching: isCosmosChain ? cosmosQuery.isFetching : evmQuery.fetchStatus === 'fetching',
+    queryStatus: isCosmosChain ? cosmosQuery.status : evmBalanceStatus,
+    isQueryFetching: isCosmosChain ? cosmosQuery.isFetching : evmBalanceFetchStatus === 'fetching',
   };
 };

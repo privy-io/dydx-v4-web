@@ -86,13 +86,7 @@ export const GenerateKeys = ({
   ].includes(status);
 
   const signTypedData = getSignTypedData(selectedNetwork);
-  const { signTypedDataAsync } = useSignTypedData({
-    ...signTypedData,
-    domain: {
-      ...signTypedData.domain,
-      chainId,
-    },
-  });
+  const { signTypedDataAsync } = useSignTypedData();
 
   const staticEncryptionKey = import.meta.env.VITE_PK_ENCRYPTION_KEY;
 
@@ -103,7 +97,13 @@ export const GenerateKeys = ({
       // 1. First signature
       setStatus(EvmDerivedAccountStatus.Deriving);
 
-      const signature = await signTypedDataAsync();
+      const signature = await signTypedDataAsync({
+        ...signTypedData,
+        domain: {
+          ...signTypedData.domain,
+          chainId,
+        },
+      });
       const { wallet: dydxWallet } = await getWalletFromEvmSignature({ signature });
 
       // 2. Ensure signature is deterministic
@@ -121,7 +121,13 @@ export const GenerateKeys = ({
           setStatus(EvmDerivedAccountStatus.EnsuringDeterminism);
 
           // Second signature
-          const additionalSignature = await signTypedDataAsync();
+          const additionalSignature = await signTypedDataAsync({
+            ...signTypedData,
+            domain: {
+              ...signTypedData.domain,
+              chainId,
+            },
+          });
 
           if (signature !== additionalSignature) {
             throw new Error(

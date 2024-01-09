@@ -104,12 +104,13 @@ export const useWalletConnection = () => {
     [walletConnectConfig, walletType, walletConnectionType]
   );
 
-  const { connectAsync: connectWagmi } = useConnectWagmi({ connector: wagmiConnector })
+  const { connectAsync: connectWagmi } = useConnectWagmi();
   const { suggestAndConnect: connectGraz } = useConnectGraz();
 
   const connectWallet = useCallback(
     async ({ walletType }: { walletType: WalletType }) => {
       const walletConnection = getWalletConnection({ walletType });
+      console.log({ walletConnection });
 
       try {
         if (!walletConnection) {
@@ -133,13 +134,17 @@ export const useWalletConnection = () => {
           }
         } else {
           if (!isConnectedWagmi) {
-            await connectWagmi({
-              connector: resolveWagmiConnector({
-                walletType,
-                walletConnection,
-                walletConnectConfig,
-              }),
+            const connector = resolveWagmiConnector({
+              walletType,
+              walletConnection,
+              walletConnectConfig,
             });
+
+            if (connector) {
+              await connectWagmi({
+                connector,
+              });
+            }
           }
         }
       } catch (error) {
@@ -156,7 +161,7 @@ export const useWalletConnection = () => {
         walletConnectionType: walletConnection.type,
       };
     },
-    [isConnectedGraz, signerGraz, isConnectedWagmi, signerWagmi]
+    [isConnectedGraz, signerGraz, isConnectedWagmi, signerWagmi, walletConnectConfig]
   );
 
   const disconnectWallet = useCallback(async () => {
@@ -204,10 +209,9 @@ export const useWalletConnection = () => {
     })();
   }, [selectedWalletType, signerWagmi, signerGraz]);
 
-  const selectWalletType = async (walletType: WalletType | undefined) => {
+  const selectWalletType = (walletType: WalletType | undefined) => {
     if (selectedWalletType) {
       setSelectedWalletType(undefined);
-      await new Promise(requestAnimationFrame);
     }
 
     setSelectedWalletType(walletType);
