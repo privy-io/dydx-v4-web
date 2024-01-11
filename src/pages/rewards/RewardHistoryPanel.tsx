@@ -19,6 +19,7 @@ import { TradingRewardHistoryTable } from '@/views/tables/TradingRewardHistoryTa
 
 import { getHistoricalTradingRewards } from '@/state/accountSelectors';
 import abacusStateManager from '@/lib/abacus';
+import { STRING_KEYS } from '@/constants/localization';
 
 export const RewardHistoryPanel = () => {
   const stringGetter = useStringGetter();
@@ -44,22 +45,22 @@ export const RewardHistoryPanel = () => {
       slotHeader={
         <Styled.Header>
           <Styled.Title>
-            <h3>Reward History</h3>
-            <span>Rewards are distrubted after every block.</span>
+            <h3>{stringGetter({ key: STRING_KEYS.REWARD_HISTORY })}</h3>
+            <span>{stringGetter({ key: STRING_KEYS.REWARD_HISTORY_DESCRIPTION })}</span>
           </Styled.Title>
           <ToggleGroup
             items={[
               {
                 value: HistoricaTradingRewardsPeriod.MONTHLY.name,
-                label: 'Monthly',
+                label: stringGetter({ key: STRING_KEYS.MONTHLY }),
               },
               {
                 value: HistoricaTradingRewardsPeriod.WEEKLY.name,
-                label: 'Weekly',
+                label: stringGetter({ key: STRING_KEYS.WEEKLY }),
               },
               {
                 value: HistoricaTradingRewardsPeriod.DAILY.name,
-                label: 'Daily',
+                label: stringGetter({ key: STRING_KEYS.DAILY }),
               },
             ]}
             value={selectedPeriod.name}

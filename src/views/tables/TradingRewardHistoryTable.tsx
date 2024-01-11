@@ -2,7 +2,8 @@ import styled, { type AnyStyledComponent } from 'styled-components';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { HistoricaTradingRewardsPeriods } from '@/constants/abacus';
-import { useTokenConfigs } from '@/hooks';
+import { STRING_KEYS, StringGetterFunction } from '@/constants/localization';
+import { useStringGetter, useTokenConfigs } from '@/hooks';
 import { layoutMixins } from '@/styles/layoutMixins';
 
 import { AssetIcon } from '@/components/AssetIcon';
@@ -19,9 +20,11 @@ export enum TradingRewardHistoryTableColumnKey {
 const getTradingRewardHistoryTableColumnDef = ({
   key,
   chainTokenLabel,
+  stringGetter,
 }: {
   key: TradingRewardHistoryTableColumnKey;
   chainTokenLabel: string;
+  stringGetter: StringGetterFunction;
 }): ColumnDef<any> => ({
   ...(
     {
@@ -31,20 +34,28 @@ const getTradingRewardHistoryTableColumnDef = ({
         label: 'Event',
         renderCell: ({ startedAtInMilliseconds, endedAtInMilliseconds }) => (
           <TableCell stacked>
-            <Styled.Rewarded>Rewarded</Styled.Rewarded>
+            <Styled.Rewarded>{stringGetter({ key: STRING_KEYS.REWARDED })}</Styled.Rewarded>
             <Styled.TimePeriod>
-              For trading
-              <Output
-                type={OutputType.Date}
-                value={startedAtInMilliseconds}
-                timeOptions={{ useUTC: true }}
-              />
-              →
-              <Output
-                type={OutputType.Date}
-                value={endedAtInMilliseconds}
-                timeOptions={{ useUTC: true }}
-              />
+              {stringGetter({
+                key: STRING_KEYS.FOR_TRADING,
+                params: {
+                  PERIOD: (
+                    <>
+                      <Output
+                        type={OutputType.Date}
+                        value={startedAtInMilliseconds}
+                        timeOptions={{ useUTC: true }}
+                      />
+                      →
+                      <Output
+                        type={OutputType.Date}
+                        value={endedAtInMilliseconds}
+                        timeOptions={{ useUTC: true }}
+                      />
+                    </>
+                  ),
+                },
+              })}
             </Styled.TimePeriod>
           </TableCell>
         ),
@@ -52,7 +63,7 @@ const getTradingRewardHistoryTableColumnDef = ({
       [TradingRewardHistoryTableColumnKey.Earned]: {
         columnKey: TradingRewardHistoryTableColumnKey.Earned,
         getCellValue: (row) => row.amount,
-        label: 'Earned',
+        label: stringGetter({ key: STRING_KEYS.EARNED }),
         renderCell: ({ amount }) => (
           <Output
             type={OutputType.Asset}
@@ -81,6 +92,7 @@ export const TradingRewardHistoryTable = ({
   withOuterBorder,
   withInnerBorders = true,
 }: ElementProps & StyleProps) => {
+  const stringGetter = useStringGetter();
   const historicalTradingRewards = useSelector(getHistoricalTradingRewards, shallowEqual);
   const periodTradingRewards = historicalTradingRewards?.get(period.name) ?? [];
   const { chainTokenLabel } = useTokenConfigs();
@@ -94,6 +106,7 @@ export const TradingRewardHistoryTable = ({
         getTradingRewardHistoryTableColumnDef({
           key,
           chainTokenLabel,
+          stringGetter,
         })
       )}
       selectionBehavior="replace"
