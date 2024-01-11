@@ -2,7 +2,6 @@ import styled, { AnyStyledComponent } from 'styled-components';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { STRING_KEYS } from '@/constants/localization';
-import breakpoints from '@/styles/breakpoints';
 import { layoutMixins } from '@/styles/layoutMixins';
 import { useStringGetter, useTokenConfigs } from '@/hooks';
 
@@ -21,13 +20,7 @@ export const TradingRewardsSummaryPanel = () => {
   const { chainTokenLabel } = useTokenConfigs();
 
   return (
-    <Styled.Panel
-      slotHeader={
-        <Styled.Header>
-          <Styled.Title>Trading Rewards Summary</Styled.Title>
-        </Styled.Header>
-      }
-    >
+    <Panel slotHeader={<Styled.Header>Trading Reward Summary</Styled.Header>}>
       <Styled.Content>
         {currentWeekTradingReward ? (
           <Styled.TradingRewardsDetails
@@ -70,36 +63,16 @@ export const TradingRewardsSummaryPanel = () => {
           <ComingSoon />
         )}
       </Styled.Content>
-    </Styled.Panel>
+    </Panel>
   );
 };
 
 const Styled: Record<string, AnyStyledComponent> = {};
 
-Styled.Panel = styled(Panel)`
-  --panel-paddingX: 1.5rem;
-  --panel-paddingY: 1.25rem;
-
-  @media ${breakpoints.tablet} {
-    --panel-paddingY: 1.5rem;
-  }
-`;
-
 Styled.Header = styled.div`
-  ${layoutMixins.spacedRow}
-  gap: 1rem;
   padding: var(--panel-paddingY) var(--panel-paddingX) 0;
-`;
-
-Styled.Title = styled.h3`
-  ${layoutMixins.inlineRow}
   font: var(--font-medium-book);
   color: var(--color-text-2);
-  margin-bottom: -0.5rem;
-
-  img {
-    font-size: 1.5rem;
-  }
 `;
 
 Styled.Content = styled.div`
@@ -135,10 +108,6 @@ Styled.Label = styled.div`
 
   font: var(--font-base-book);
   color: var(--color-text-1);
-`;
-
-Styled.ComingSoon = styled.div`
-  color: var(--color-text-0);
 `;
 
 Styled.TimePeriod = styled.div`

@@ -31,6 +31,8 @@ import { truncateAddress } from '@/lib/wallet';
 
 import { DYDXBalancePanel } from './rewards/DYDXBalancePanel';
 import { MigratePanel } from './rewards/MigratePanel';
+import { GovernancePanel } from './rewards/GovernancePanel';
+import { StakingPanel } from './rewards/StakingPanel';
 
 const ENS_CHAIN_ID = 1; // Ethereum
 
@@ -177,7 +179,7 @@ const Profile = () => {
           onClick={() => dispatch(openDialog({ type: DialogTypes.Help }))}
         />
       </Styled.EqualGrid>
-      
+
       <MigratePanel />
       <DYDXBalancePanel />
 
@@ -229,6 +231,9 @@ const Profile = () => {
           withInnerBorders={false}
         />
       </Styled.TablePanel>
+
+      <GovernancePanel />
+      <StakingPanel />
     </Styled.MobileProfileLayout>
   );
 };
@@ -242,6 +247,7 @@ Styled.MobileProfileLayout = styled.div`
 
   gap: 1rem;
   padding: 1.25rem 0.9rem;
+  max-width: 100vw;
 `;
 
 Styled.Header = styled.header`
@@ -336,7 +342,7 @@ Styled.Details = styled(Details)`
 
 Styled.RewardsPanel = styled(Panel)`
   align-self: flex-start;
-  
+
   &,
   > * {
     height: 100%;

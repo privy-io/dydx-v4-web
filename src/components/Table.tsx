@@ -33,19 +33,19 @@ import {
 
 import { useAsyncList } from 'react-stately';
 
-import { useBreakpoints } from '@/hooks';
+import { useBreakpoints, useStringGetter } from '@/hooks';
 import { MediaQueryKeys } from '@/hooks/useBreakpoints';
-
-import { Checkbox } from '@/components/Checkbox';
 
 import { breakpoints } from '@/styles';
 import { layoutMixins } from '@/styles/layoutMixins';
+
+import { STRING_KEYS } from '@/constants/localization';
+import { CaretIcon } from '@/icons';
 
 import { Icon, IconName } from './Icon';
 import { Tag } from './Tag';
 import { MustBigNumber } from '@/lib/numbers';
 import { Button } from './Button';
-import { CaretIcon } from '@/icons';
 
 export { TableCell } from './Table/TableCell';
 export { TableColumnHeader } from './Table/TableColumnHeader';
@@ -141,6 +141,7 @@ export const Table = <TableRowData extends object, TableRowKey extends Key>({
 }: ElementProps<TableRowData, TableRowKey> & StyleProps) => {
   const [selectedKeys, setSelectedKeys] = useState(new Set<TableRowKey>());
   const [numRowsToShow, setNumRowsToShow] = useState(initialNumRowsToShow);
+  const stringGetter = useStringGetter();
 
   const currentBreakpoints = useBreakpoints();
   const shownColumns = columns.filter(
@@ -260,7 +261,7 @@ export const Table = <TableRowData extends object, TableRowKey extends Key>({
           onClick={() => setNumRowsToShow(data.length)}
           slotRight={<CaretIcon />}
         >
-          View more
+          {stringGetter({ key: STRING_KEYS.VIEW_MORE })}
         </Styled.ViewMoreButton>
       )}
     </>

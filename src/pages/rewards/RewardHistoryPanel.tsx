@@ -40,7 +40,7 @@ export const RewardHistoryPanel = () => {
   );
 
   return (
-    <Styled.Panel
+    <Panel
       slotHeader={
         <Styled.Header>
           <Styled.Title>
@@ -73,26 +73,21 @@ export const RewardHistoryPanel = () => {
       ) : (
         <ComingSoon />
       )}
-    </Styled.Panel>
+    </Panel>
   );
 };
 
 const Styled: Record<string, AnyStyledComponent> = {};
 
-Styled.Panel = styled(Panel)`
-  --panel-paddingX: 1.5rem;
-  --panel-paddingY: 1.25rem;
-
-  @media ${breakpoints.tablet} {
-    --panel-paddingY: 1.5rem;
-  }
-`;
-
 Styled.Header = styled.div`
   ${layoutMixins.spacedRow}
 
-  padding: 1rem 1.5rem 0;
+  padding: 1rem 1rem 0;
   margin-bottom: -0.5rem;
+
+  @media ${breakpoints.notTablet} {
+    padding: 1.25rem 1.5rem 0;
+  }
 `;
 
 Styled.Title = styled.div`
