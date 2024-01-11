@@ -20,7 +20,11 @@ export const TradingRewardsSummaryPanel = () => {
   const { chainTokenLabel } = useTokenConfigs();
 
   return (
-    <Panel slotHeader={<Styled.Header>Trading Reward Summary</Styled.Header>}>
+    <Panel
+      slotHeader={
+        <Styled.Header>{stringGetter({ key: STRING_KEYS.TRADING_REWARDS_SUMMARY })}</Styled.Header>
+      }
+    >
       <Styled.Content>
         {currentWeekTradingReward ? (
           <Styled.TradingRewardsDetails
