@@ -32,20 +32,20 @@ if (
     /* hardcoded injection depending on whether the app is available on App Store and/or Google Play */
 
     if (SMARTBANNER_APPSTORE_URL) {
-      smartbanner = `\t<meta name="smartbanner:button-url-apple" content="${SMARTBANNER_APPSTORE_URL}">\n` + smartbanner;
+      smartbanner = `\t<meta name="smartbanner:button-url-apple" content="${SMARTBANNER_APPSTORE_URL}">\n${smartbanner}`;
     }
     if (SMARTBANNER_GOOGLEPLAY_URL) {
-      smartbanner = `\t<meta name="smartbanner:button-url-google" content="${SMARTBANNER_GOOGLEPLAY_URL}">\n` + smartbanner;
+      smartbanner = `\t<meta name="smartbanner:button-url-google" content="${SMARTBANNER_GOOGLEPLAY_URL}">\n${smartbanner}`;
     }
     if (SMARTBANNER_APPSTORE_URL) {
       if (SMARTBANNER_GOOGLEPLAY_URL) {
-        smartbanner = `\t<meta name="smartbanner:enabled-platforms" content="android,ios">\n` + smartbanner;
+        smartbanner = `\t<meta name="smartbanner:enabled-platforms" content="android,ios">\n${smartbanner}`;
       } else {
-        smartbanner = `\t<meta name="smartbanner:enabled-platforms" content="ios">\n` + smartbanner;
+        smartbanner = `\t<meta name="smartbanner:enabled-platforms" content="ios">\n${smartbanner}`;
       }
     } else {
       if (SMARTBANNER_GOOGLEPLAY_URL) {
-        smartbanner = `\t<meta name="smartbanner:enabled-platforms" content="android">\n` + smartbanner;
+        smartbanner = `\t<meta name="smartbanner:enabled-platforms" content="android">\n${smartbanner}`;
       }
     }
 
