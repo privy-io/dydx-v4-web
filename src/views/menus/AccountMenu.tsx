@@ -189,6 +189,17 @@ export const AccountMenu = () => {
           label: stringGetter({ key: STRING_KEYS.DISPLAY_SETTINGS }),
           onSelect: () => dispatch(openDialog({ type: DialogTypes.DisplaySettings })),
         },
+        {
+          value: 'MobileDownload',
+          icon:
+            theme === AppTheme.Light ? (
+              <Icon iconName={IconName.Sun} />
+            ) : (
+              <Icon iconName={IconName.Moon} />
+            ),
+          label: "Download Mobile App",
+          onSelect: () => dispatch(openDialog({ type: DialogTypes.MobileDownload })),
+        },
         ...(onboardingState === OnboardingState.AccountConnected && hdKey
           ? [
               {

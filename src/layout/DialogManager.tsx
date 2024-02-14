@@ -62,6 +62,7 @@ export const DialogManager = () => {
     [DialogTypes.ExternalLink]: <ExternalLinkDialog {...modalProps} />,
     [DialogTypes.ExternalNavStride]: <ExternalNavStrideDialog {...modalProps} />,
     [DialogTypes.MnemonicExport]: <MnemonicExportDialog {...modalProps} />,
+    [DialogTypes.MobileDownload]: <MobilDownloadDialog {...modalProps} />,
     [DialogTypes.MobileSignIn]: <MobileSignInDialog {...modalProps} />,
     [DialogTypes.Onboarding]: <OnboardingDialog {...modalProps} />,
     [DialogTypes.OrderDetails]: <OrderDetailsDialog {...modalProps} />,
