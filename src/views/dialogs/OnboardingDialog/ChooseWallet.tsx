@@ -58,7 +58,7 @@ export const ChooseWallet = () => {
             {walletType === WalletType.Discord && 'Discord'}
             {walletType === WalletType.Email && 'Email'}
             {walletType === WalletType.Twitter && 'Twitter'}
-            {[WalletType.Discord, WalletType.Email, WalletType.Twitter].includes(walletType) && stringGetter({ key: wallets[walletType].stringKey })}
+            {![WalletType.Discord, WalletType.Email, WalletType.Twitter].includes(walletType) && stringGetter({ key: wallets[walletType].stringKey })}
           </Styled.WalletButton>
         ))}
       </Styled.Wallets>
