@@ -328,6 +328,12 @@ export const getIsAccountConnected = (state: RootState) =>
 
 /**
  * @param state
+ * @returns whether the user was attempted to login via an OAuth provider
+ * */
+export const getAttemptedOAuth = (state: RootState) => state.account.attemptedOAuth;
+
+/**
+ * @param state
  * @returns OnboardingGuards (Record of boolean items) to aid in determining what Onboarding Step the user is on.
  */
 export const getOnboardingGuards = (state: RootState) => state.account.onboardingGuards;

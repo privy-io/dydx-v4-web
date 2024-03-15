@@ -8,7 +8,7 @@ import {
   useOfflineSigners as useOfflineSignersGraz,
   WalletType as CosmosWalletType,
 } from 'graz';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   useConnect as useConnectWagmi,
   useAccount as useAccountWagmi,
@@ -32,6 +32,8 @@ import {
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
+import { setAttemptedOAuth } from '@/state/account';
+import { getAttemptedOAuth } from '@/state/accountSelectors';
 import { getSelectedDydxChainId } from '@/state/appSelectors';
 
 import { log } from '@/lib/telemetry';
@@ -42,6 +44,9 @@ import { getWalletConnection, parseWalletError } from '@/lib/wallet';
 import { useStringGetter } from './useStringGetter';
 
 export const useWalletConnection = () => {
+  const dispatch = useDispatch();
+  const attemptedOAuth = useSelector(getAttemptedOAuth);
+
   const stringGetter = useStringGetter();
 
   // EVM wallet connection
@@ -114,6 +119,7 @@ export const useWalletConnection = () => {
     defaultValue: {} as EvmDerivedAddresses,
   });
   const { ready, authenticated } = usePrivy();
+
   const { initOAuth } = useLoginWithOAuth();
   const { logout } = useLogout();
 
@@ -131,21 +137,29 @@ export const useWalletConnection = () => {
 
       const walletConnection = getWalletConnection({ walletType });
 
+      console.log(selectedWalletType);
+
       try {
         if (!walletConnection) {
           throw new Error('Onboarding: No wallet connection found.');
         } else if (walletConnection.type === WalletConnectionType.Email) {
         } else if (walletConnection.type === WalletConnectionType.OAuth) {
           if (!isConnectedWagmi && ready && !authenticated) {
-            const provider = wallets[walletType].oAuthProvider;
-            if (provider) {
-              try {
-                await initOAuth({
-                  provider,
-                });
-              } catch (error) {
-                setSelectedWalletError(error.message);
-                log('useWalletConnection/connectWallet', error);
+            if (attemptedOAuth) {
+              dispatch(setAttemptedOAuth(false));
+              return {};
+            } else {
+              const provider = wallets[walletType].oAuthProvider;
+              if (provider) {
+                dispatch(setAttemptedOAuth(true));
+                try {
+                  await initOAuth({
+                    provider,
+                  });
+                } catch (error) {
+                  setSelectedWalletError(error.message);
+                  log('useWalletConnection/connectWallet', error);
+                }
               }
             }
           }

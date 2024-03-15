@@ -27,6 +27,7 @@ export type AccountState = {
   tradingRewards?: TradingRewards;
   wallet?: Nullable<Wallet>;
   walletType?: WalletType;
+  attemptedOAuth?: boolean;
 
   subaccount?: Nullable<Subaccount>;
   fills?: SubaccountFills;
@@ -168,6 +169,10 @@ export const accountSlice = createSlice({
       ...state,
       wallet: action.payload,
     }),
+    setAttemptedOAuth: (state, action: PayloadAction<boolean>) => ({
+      ...state,
+      attemptedOAuth: action.payload,
+    }),
     viewedFills: (state) => {
       state.hasUnseenFillUpdates = false;
     },
@@ -206,6 +211,7 @@ export const {
   setRestrictionType,
   setSubaccount,
   setWallet,
+  setAttemptedOAuth,
   viewedFills,
   viewedOrders,
   setBalances,
