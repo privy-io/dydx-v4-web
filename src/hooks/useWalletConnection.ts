@@ -136,11 +136,11 @@ export const useWalletConnection = () => {
           throw new Error('Onboarding: No wallet connection found.');
         } else if (walletConnection.type === WalletConnectionType.Email) {
         } else if (walletConnection.type === WalletConnectionType.OAuth) {
-          if (!isConnectedWagmi && !authenticated && ready) {
+          if (!isConnectedWagmi && ready && !authenticated) {
             const provider = wallets[walletType].oAuthProvider;
             if (provider) {
               try {
-                initOAuth({
+                await initOAuth({
                   provider,
                 });
               } catch (error) {
