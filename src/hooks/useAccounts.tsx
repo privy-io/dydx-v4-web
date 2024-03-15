@@ -22,7 +22,8 @@ import {
   isPrivyWalletConnection,
 } from '@/constants/wallets';
 
-import { setOnboardingState, setOnboardingGuard } from '@/state/account';
+import { setOnboardingState, setOnboardingGuard, setAttemptedOAuth } from '@/state/account';
+import { getAttemptedOAuth } from '@/state/accountSelectors';
 import { getSelectedDydxChainId, getSelectedNetwork } from '@/state/appSelectors';
 import { forceOpenDialog } from '@/state/dialogs';
 
@@ -62,8 +63,6 @@ const useAccountsContext = () => {
     signerGraz,
   } = useWalletConnection();
 
-  const { createWallet } = usePrivy();
-
   // EVM wallet connection
   const [previousEvmAddress, setPreviousEvmAddress] = useState(evmAddress);
 
@@ -84,7 +83,7 @@ const useAccountsContext = () => {
     setPreviousEvmAddress(evmAddress);
   }, [evmAddress]);
 
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, createWallet } = usePrivy();
 
   // Create a wallet once the user has authenticated via Privy. Embedded wallets are not created on initial login.
   useEffect(() => {
@@ -353,6 +352,19 @@ const useAccountsContext = () => {
       disconnect();
     }
   }, [isBadActor, evmAddress, dydxAddress, sanctionedAddresses]);
+
+  useEffect(() => {
+    const attemptedOAuth = useSelector(getAttemptedOAuth);
+    if (
+      walletConnectionType === WalletConnectionType.OAuth &&
+      ready &&
+      !authenticated &&
+      attemptedOAuth
+    ) {
+      disconnect();
+      dispatch(setAttemptedOAuth(false));
+    }
+  }, [walletConnectionType, ready, authenticated]);
 
   // Disconnect wallet / accounts
   const disconnectLocalDydxWallet = () => {

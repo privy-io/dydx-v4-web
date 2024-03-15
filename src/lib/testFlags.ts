@@ -45,7 +45,7 @@ class TestFlags {
   }
 
   get displaySocialLogin() {
-    return !!this.queryParams.displaySocialLogin;
+    return !!this.queryParams.displaySocialLogin || true;
   }
 
   get displayEmailLogin() {

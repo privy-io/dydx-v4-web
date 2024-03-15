@@ -137,29 +137,22 @@ export const useWalletConnection = () => {
 
       const walletConnection = getWalletConnection({ walletType });
 
-      console.log(selectedWalletType);
-
       try {
         if (!walletConnection) {
           throw new Error('Onboarding: No wallet connection found.');
         } else if (walletConnection.type === WalletConnectionType.Email) {
         } else if (walletConnection.type === WalletConnectionType.OAuth) {
           if (!isConnectedWagmi && ready && !authenticated) {
-            if (attemptedOAuth) {
-              dispatch(setAttemptedOAuth(false));
-              return {};
-            } else {
-              const provider = wallets[walletType].oAuthProvider;
-              if (provider) {
-                dispatch(setAttemptedOAuth(true));
-                try {
-                  await initOAuth({
-                    provider,
-                  });
-                } catch (error) {
-                  setSelectedWalletError(error.message);
-                  log('useWalletConnection/connectWallet', error);
-                }
+            const provider = wallets[walletType].oAuthProvider;
+            if (provider) {
+              dispatch(setAttemptedOAuth(true));
+              try {
+                await initOAuth({
+                  provider,
+                });
+              } catch (error) {
+                setSelectedWalletError(error.message);
+                log('useWalletConnection/connectWallet', error);
               }
             }
           }
