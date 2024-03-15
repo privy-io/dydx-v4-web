@@ -139,9 +139,14 @@ export const useWalletConnection = () => {
           if (!isConnectedWagmi && !authenticated && ready) {
             const provider = wallets[walletType].oAuthProvider;
             if (provider) {
-              initOAuth({
-                provider,
-              });
+              try {
+                initOAuth({
+                  provider,
+                });
+              } catch (error) {
+                setSelectedWalletError(error.message);
+                log('useWalletConnection/connectWallet', error);
+              }
             }
           }
         } else if (walletConnection.type === WalletConnectionType.CosmosSigner) {
