@@ -218,36 +218,44 @@ export const useWalletConnection = () => {
     (async () => {
       setSelectedWalletError(undefined);
 
-      if (selectedWalletType) {
-        try {
-          const { walletType, walletConnectionType } = await connectWallet({
-            walletType: selectedWalletType,
-            isAccountConnected: Boolean(
-              evmAddress && evmDerivedAddresses[evmAddress]?.encryptedSignature
-            ),
-          });
+      if (ready) {
+        if (
+          selectedWalletType &&
+          !(
+            getWalletConnection({ walletType: selectedWalletType })?.type ===
+              WalletConnectionType.OAuth && !authenticated
+          )
+        ) {
+          try {
+            const { walletType, walletConnectionType } = await connectWallet({
+              walletType: selectedWalletType,
+              isAccountConnected: Boolean(
+                evmAddress && evmDerivedAddresses[evmAddress]?.encryptedSignature
+              ),
+            });
 
-          setWalletType(walletType);
-          setWalletConnectionType(walletConnectionType);
-        } catch (error) {
-          const { walletErrorType, message } = parseWalletError({
-            error,
-            stringGetter,
-          });
+            setWalletType(walletType);
+            setWalletConnectionType(walletConnectionType);
+          } catch (error) {
+            const { walletErrorType, message } = parseWalletError({
+              error,
+              stringGetter,
+            });
 
-          if (message) {
-            log('useWalletConnection/connectWallet', error, { walletErrorType });
-            setSelectedWalletError(message);
+            if (message) {
+              log('useWalletConnection/connectWallet', error, { walletErrorType });
+              setSelectedWalletError(message);
+            }
           }
-        }
-      } else {
-        setWalletType(undefined);
-        setWalletConnectionType(undefined);
+        } else {
+          setWalletType(undefined);
+          setWalletConnectionType(undefined);
 
-        await disconnectWallet();
+          await disconnectWallet();
+        }
       }
     })();
-  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress]);
+  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress, ready]);
 
   const selectWalletType = async (walletType: WalletType | undefined) => {
     if (selectedWalletType) {
