@@ -22,7 +22,7 @@ export const useSelectedNetwork = (): {
   const selectedNetwork = useSelector(getSelectedNetwork);
 
   const { wallets } = useWallets();
-  const wallet = wallets[0];
+  const privyWallet = wallets.find((wallet) => wallet.walletClientType === 'privy');
 
   const [, setLocalStorageNetwork] = useLocalStorage<DydxNetwork>({
     key: LocalStorageKey.SelectedNetwork,
@@ -37,7 +37,7 @@ export const useSelectedNetwork = (): {
       setLocalStorageNetwork(network);
       dispatch(setSelectedNetwork(network));
       const chainId = Number(ENVIRONMENT_CONFIG_MAP[selectedNetwork].ethereumChainId);
-      wallet?.switchChain(chainId);
+      privyWallet?.switchChain(chainId);
     },
     [dispatch, disconnect, setLocalStorageNetwork]
   );
