@@ -212,20 +212,35 @@ export const useWalletConnection = () => {
   // Wallet selection
 
   const [selectedWalletType, setSelectedWalletType] = useState<WalletType | undefined>(walletType);
+  const [oAuthHandled, setOAuthHandled] = useState(false);
   const [selectedWalletError, setSelectedWalletError] = useState<string>();
+
+  useEffect(() => {
+    (async () => {
+      if (!oAuthHandled) {
+        if (
+          selectedWalletType &&
+          getWalletConnection({ walletType: selectedWalletType })?.type ===
+            WalletConnectionType.OAuth &&
+          !authenticated
+        ) {
+          setSelectedWalletType(undefined);
+          setWalletType(undefined);
+          setWalletConnectionType(undefined);
+
+          await disconnectWallet();
+        }
+      }
+      setOAuthHandled(true);
+    })();
+  }, [selectedWalletType, ready, authenticated, oAuthHandled, setOAuthHandled]);
 
   useEffect(() => {
     (async () => {
       setSelectedWalletError(undefined);
 
-      if (ready) {
-        if (
-          selectedWalletType &&
-          !(
-            getWalletConnection({ walletType: selectedWalletType })?.type ===
-              WalletConnectionType.OAuth && !authenticated
-          )
-        ) {
+      if (oAuthHandled) {
+        if (selectedWalletType) {
           try {
             const { walletType, walletConnectionType } = await connectWallet({
               walletType: selectedWalletType,
@@ -248,6 +263,7 @@ export const useWalletConnection = () => {
             }
           }
         } else {
+          setSelectedWalletType(undefined);
           setWalletType(undefined);
           setWalletConnectionType(undefined);
 
@@ -255,7 +271,7 @@ export const useWalletConnection = () => {
         }
       }
     })();
-  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress, ready]);
+  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress, oAuthHandled]);
 
   const selectWalletType = async (walletType: WalletType | undefined) => {
     if (selectedWalletType) {
