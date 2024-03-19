@@ -215,6 +215,14 @@ export const useWalletConnection = () => {
   const [oAuthHandled, setOAuthHandled] = useState(false);
   const [selectedWalletError, setSelectedWalletError] = useState<string>();
 
+  async function disconnectSelectedWallet() {
+    setSelectedWalletType(undefined);
+    setWalletType(undefined);
+    setWalletConnectionType(undefined);
+
+    await disconnectWallet();
+  }
+
   useEffect(() => {
     (async () => {
       if (!oAuthHandled) {
@@ -224,11 +232,7 @@ export const useWalletConnection = () => {
             WalletConnectionType.OAuth &&
           !authenticated
         ) {
-          setSelectedWalletType(undefined);
-          setWalletType(undefined);
-          setWalletConnectionType(undefined);
-
-          await disconnectWallet();
+          await disconnectSelectedWallet();
         }
       }
       setOAuthHandled(true);
@@ -263,11 +267,7 @@ export const useWalletConnection = () => {
             }
           }
         } else {
-          setSelectedWalletType(undefined);
-          setWalletType(undefined);
-          setWalletConnectionType(undefined);
-
-          await disconnectWallet();
+          await disconnectSelectedWallet();
         }
       }
     })();
