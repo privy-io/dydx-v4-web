@@ -89,12 +89,12 @@ export const WAGMI_SUPPORTED_CHAINS: Chain[] = [
   kava,
 ];
 
-const selectedNetwork = getLocalStorage({
+const defaultSelectedNetwork = getLocalStorage({
   key: LocalStorageKey.SelectedNetwork,
   defaultValue: DEFAULT_APP_ENVIRONMENT,
   validateFn: validateAgainstAvailableEnvironments,
 });
-const chainId = Number(ENVIRONMENT_CONFIG_MAP[selectedNetwork].ethereumChainId);
+const defaultChainId = Number(ENVIRONMENT_CONFIG_MAP[defaultSelectedNetwork].ethereumChainId);
 
 export const privyConfig: PrivyClientConfig = {
   embeddedWallets: {
@@ -105,7 +105,7 @@ export const privyConfig: PrivyClientConfig = {
   appearance: {
     theme: '#28283c',
   },
-  defaultChain: chainId === mainnet.id ? mainnet : sepolia,
+  defaultChain: defaultChainId === mainnet.id ? mainnet : sepolia,
 };
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
