@@ -225,7 +225,7 @@ export const useWalletConnection = () => {
 
   useEffect(() => {
     (async () => {
-      if (!oAuthHandled) {
+      if (!oAuthHandled && ready) {
         if (
           selectedWalletType &&
           getWalletConnection({ walletType: selectedWalletType })?.type ===
