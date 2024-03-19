@@ -12,7 +12,7 @@ import {
   type StringGetterFunction,
   TOOLTIP_STRING_KEYS,
 } from '@/constants/localization';
-import { DydxChainAsset, wallets } from '@/constants/wallets';
+import { DydxChainAsset, isPrivyWalletConnection, wallets } from '@/constants/wallets';
 
 import {
   useAccounts,
@@ -42,7 +42,7 @@ import { openDialog } from '@/state/dialogs';
 
 import { isTruthy } from '@/lib/isTruthy';
 import { MustBigNumber } from '@/lib/numbers';
-import { truncateAddress } from '@/lib/wallet';
+import { getWalletConnection, truncateAddress } from '@/lib/wallet';
 
 import { getMobileAppUrl } from '../dialogs/MobileDownloadDialog';
 
@@ -58,6 +58,8 @@ export const AccountMenu = () => {
   const theme = useSelector(getAppTheme);
 
   const { evmAddress, walletType, dydxAddress, hdKey } = useAccounts();
+  const walletConnection = walletType ? getWalletConnection({ walletType }) : undefined;
+  const isPrivy = isPrivyWalletConnection(walletConnection?.type);
 
   const usdcBalance = freeCollateral?.current || 0;
 
@@ -107,18 +109,20 @@ export const AccountMenu = () => {
                 />
               </WithTooltip>
             </Styled.AddressRow>
-            <Styled.AddressRow>
-              {walletType && (
-                <Styled.SourceIcon>
-                  <Styled.ConnectorIcon iconName={IconName.AddressConnector} />
-                  <Icon iconComponent={wallets[walletType].icon as ElementType} />
-                </Styled.SourceIcon>
-              )}
-              <Styled.Column>
-                <Styled.label>{stringGetter({ key: STRING_KEYS.SOURCE_ADDRESS })}</Styled.label>
-                <Styled.Address>{truncateAddress(evmAddress, '0x')}</Styled.Address>
-              </Styled.Column>
-            </Styled.AddressRow>
+            {!isPrivy && (
+              <Styled.AddressRow>
+                {walletType && (
+                  <Styled.SourceIcon>
+                    <Styled.ConnectorIcon iconName={IconName.AddressConnector} />
+                    <Icon iconComponent={wallets[walletType].icon as ElementType} />
+                  </Styled.SourceIcon>
+                )}
+                <Styled.Column>
+                  <Styled.label>{stringGetter({ key: STRING_KEYS.SOURCE_ADDRESS })}</Styled.label>
+                  <Styled.Address>{truncateAddress(evmAddress, '0x')}</Styled.Address>
+                </Styled.Column>
+              </Styled.AddressRow>
+            )}
             <Styled.Balances>
               <div>
                 <div>
