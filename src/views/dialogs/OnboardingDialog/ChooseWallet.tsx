@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { useLoginWithEmail, usePrivy } from '@privy-io/react-auth';
+import { useLoginWithEmail } from '@privy-io/react-auth';
 import styled, { AnyStyledComponent } from 'styled-components';
 
 import { AlertType } from '@/constants/alerts';
@@ -17,6 +17,7 @@ import { layoutMixins } from '@/styles/layoutMixins';
 import { AlertMessage } from '@/components/AlertMessage';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
+import { Input, InputType } from '@/components/Input';
 import { Link } from '@/components/Link';
 
 export const ChooseWallet = () => {
@@ -26,6 +27,21 @@ export const ChooseWallet = () => {
   const displayedWallets = useDisplayedWallets();
 
   const { selectWalletType, selectedWalletType, selectedWalletError } = useAccounts();
+
+  const { sendCode, loginWithCode } = useLoginWithEmail();
+
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value);
+
+  const handleSendCode = () => {
+    sendCode({ email });
+  };
+  const handleLogin = () => {
+    loginWithCode({ code });
+  };
 
   return (
     <>
@@ -71,6 +87,22 @@ export const ChooseWallet = () => {
           </Styled.WalletButton>
         ))}
       </Styled.Wallets>
+
+      <Styled.Email>
+        <Input
+          type={InputType.Text}
+          placeholder="Email"
+          value={email}
+          onChange={handleEmailChange}
+        />
+        <Input type={InputType.Text} placeholder="Code" value={code} onChange={handleCodeChange} />
+        <Button action={ButtonAction.Base} onClick={handleSendCode}>
+          Send code
+        </Button>
+        <Button action={ButtonAction.Base} onClick={handleLogin}>
+          Login
+        </Button>
+      </Styled.Email>
 
       <Styled.Footer>
         <Link href={walletLearnMore} withIcon>
@@ -124,6 +156,12 @@ Styled.WalletButton = styled(Button)`
 Styled.Icon = styled(Icon)`
   width: 1.5em;
   height: 1.5em;
+`;
+
+Styled.Email = styled.div`
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 `;
 
 Styled.Footer = styled.footer`
