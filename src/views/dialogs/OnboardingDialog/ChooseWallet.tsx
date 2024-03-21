@@ -3,7 +3,7 @@ import styled, { AnyStyledComponent } from 'styled-components';
 import { AlertType } from '@/constants/alerts';
 import { ButtonAction, ButtonSize } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
-import { wallets } from '@/constants/wallets';
+import { WalletType, wallets } from '@/constants/wallets';
 
 import { useAccounts, useStringGetter, useURLConfigs } from '@/hooks';
 import { useDisplayedWallets } from '@/hooks/useDisplayedWallets';
@@ -16,7 +16,7 @@ import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { Link } from '@/components/Link';
 
-export const ChooseWallet = () => {
+export const ChooseWallet = ({ setIsOpen }: { setIsOpen: (isOpen: boolean) => void }) => {
   const stringGetter = useStringGetter();
   const { walletLearnMore } = useURLConfigs();
 
@@ -49,7 +49,12 @@ export const ChooseWallet = () => {
           <Styled.WalletButton
             action={ButtonAction.Base}
             key={walletType}
-            onClick={() => selectWalletType(walletType)}
+            onClick={() => {
+              if (walletType === WalletType.Privy) {
+                setIsOpen(false);
+              }
+              selectWalletType(walletType);
+            }}
             slotLeft={<Styled.Icon iconComponent={wallets[walletType].icon} />}
             size={ButtonSize.Small}
           >
