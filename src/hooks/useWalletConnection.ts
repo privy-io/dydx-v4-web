@@ -115,8 +115,10 @@ export const useWalletConnection = () => {
   });
   const { ready, authenticated } = usePrivy();
   const { login } = useLogin({
-    onError: () => {
-      setSelectedWalletError('Privy login failed');
+    onError: (error) => {
+      if (error !== 'exited_auth_flow') {
+        setSelectedWalletError('Privy login failed');
+      }
     },
   });
   const { logout } = useLogout();
