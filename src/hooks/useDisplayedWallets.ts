@@ -23,8 +23,9 @@ export const useDisplayedWallets = () => {
     // WalletType.BitKeep,
     // WalletType.Coin98,
 
+    testFlags.displayPrivyLogin && WalletType.Privy,
+
     WalletType.OtherWallet,
-    WalletType.Privy,
   ].filter(isTruthy);
 
   return displayedWallets;

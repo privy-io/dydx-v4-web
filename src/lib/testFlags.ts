@@ -44,12 +44,8 @@ class TestFlags {
     return !!this.queryParams.isolatedmargin;
   }
 
-  get displaySocialLogin() {
-    return !!this.queryParams.displaysociallogin;
-  }
-
-  get displayEmailLogin() {
-    return !!this.queryParams.displayemaillogin;
+  get displayPrivyLogin() {
+    return !!this.queryParams.displayprivylogin;
   }
 }
 
