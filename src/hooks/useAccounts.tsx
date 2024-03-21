@@ -19,7 +19,6 @@ import {
   WalletType,
   WalletConnectionType,
   getSignTypedData,
-  isPrivyWalletConnection,
 } from '@/constants/wallets';
 
 import { setOnboardingState, setOnboardingGuard } from '@/state/account';
@@ -89,7 +88,7 @@ const useAccountsContext = () => {
   // Create a wallet once the user has authenticated via Privy. Embedded wallets are not created on initial login.
   useEffect(() => {
     (async function () {
-      if (!evmAddress && isPrivyWalletConnection(walletConnectionType) && authenticated) {
+      if (!evmAddress && walletConnectionType === WalletConnectionType.Privy && authenticated) {
         await createWallet();
       }
     })();
@@ -256,7 +255,7 @@ const useAccountsContext = () => {
 
           const evmDerivedAccount = evmDerivedAddresses[evmAddress];
 
-          if (isPrivyWalletConnection(walletConnectionType) && authenticated && ready) {
+          if (walletConnectionType === WalletConnectionType.Privy && authenticated && ready) {
             try {
               const signature = await signTypedDataAsync();
 

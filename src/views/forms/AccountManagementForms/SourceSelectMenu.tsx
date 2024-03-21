@@ -3,7 +3,7 @@ import styled, { type AnyStyledComponent } from 'styled-components';
 
 import { TransferType } from '@/constants/abacus';
 import { STRING_KEYS } from '@/constants/localization';
-import { WalletConnectionType, isPrivyWalletConnection } from '@/constants/wallets';
+import { WalletType } from '@/constants/wallets';
 
 import { useAccounts, useStringGetter } from '@/hooks';
 
@@ -15,8 +15,6 @@ import { SearchSelectMenu } from '@/components/SearchSelectMenu';
 import { getTransferInputs } from '@/state/inputsSelectors';
 
 import { isTruthy } from '@/lib/isTruthy';
-import { testFlags } from '@/lib/testFlags';
-import { getWalletConnection } from '@/lib/wallet';
 
 type ElementProps = {
   label?: string;
@@ -32,8 +30,6 @@ export const SourceSelectMenu = ({
   onSelect,
 }: ElementProps) => {
   const { walletType } = useAccounts();
-  const walletConnectionType = walletType ? getWalletConnection({ walletType })?.type : undefined;
-  const isPrivy = isPrivyWalletConnection(walletConnectionType);
 
   const stringGetter = useStringGetter();
   const { type, depositOptions, withdrawalOptions, resources } =
@@ -74,7 +70,7 @@ export const SourceSelectMenu = ({
           groupLabel: stringGetter({ key: STRING_KEYS.EXCHANGES }),
           items: exchangeItems,
         },
-        !isPrivy &&
+        walletType !== WalletType.Privy &&
           chainItems.length > 0 && {
             group: 'chains',
             groupLabel: stringGetter({ key: STRING_KEYS.CHAINS }),

@@ -24,20 +24,8 @@ export const useDisplayedWallets = () => {
     // WalletType.Coin98,
 
     WalletType.OtherWallet,
+    WalletType.Privy,
   ].filter(isTruthy);
-
-  if (testFlags.displayEmailLogin) {
-    displayedWallets.push(WalletType.Email);
-  }
-
-  if (testFlags.displaySocialLogin) {
-    displayedWallets.push(
-      WalletType.Discord,
-      WalletType.Twitter,
-      WalletType.Google,
-      WalletType.Apple
-    );
-  }
 
   return displayedWallets;
 };

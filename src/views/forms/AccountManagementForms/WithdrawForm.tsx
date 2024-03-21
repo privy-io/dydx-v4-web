@@ -20,14 +20,13 @@ import {
   NumberSign,
   TOKEN_DECIMALS,
 } from '@/constants/numbers';
-import { isPrivyWalletConnection } from '@/constants/wallets';
+import { WalletType } from '@/constants/wallets';
 
 import {
   useAccounts,
   useDebounce,
   useDydxClient,
   useRestrictions,
-  useSelectedNetwork,
   useStringGetter,
   useSubaccount,
   useTokenConfigs,
@@ -59,7 +58,6 @@ import { validateCosmosAddress } from '@/lib/addressUtils';
 import { track } from '@/lib/analytics';
 import { MustBigNumber } from '@/lib/numbers';
 import { getNobleChainId } from '@/lib/squid';
-import { getWalletConnection } from '@/lib/wallet';
 
 import { TokenSelectMenu } from './TokenSelectMenu';
 import { WithdrawButtonAndReceipt } from './WithdrawForm/WithdrawButtonAndReceipt';
@@ -285,17 +283,15 @@ export const WithdrawForm = () => {
   }, [freeCollateralBN, setWithdrawAmount]);
 
   const { walletType } = useAccounts();
-  const walletConnectionType = walletType ? getWalletConnection({ walletType })?.type : undefined;
-  const isPrivy = isPrivyWalletConnection(walletConnectionType);
 
   useEffect(() => {
-    if (isPrivy) {
+    if (walletType === WalletType.Privy) {
       abacusStateManager.setTransferValue({
         field: TransferInputField.exchange,
         value: 'coinbase',
       });
     }
-  }, [isPrivy]);
+  }, [walletType]);
 
   const onSelectNetwork = useCallback((name: string, type: 'chain' | 'exchange') => {
     if (name) {

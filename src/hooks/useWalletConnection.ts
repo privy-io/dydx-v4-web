@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 
-import { usePrivy, useLogout, useLoginWithOAuth } from '@privy-io/react-auth';
+import { usePrivy, useLogout, useLogin } from '@privy-io/react-auth';
 import {
   useSuggestChainAndConnect as useConnectGraz,
   useAccount as useAccountGraz,
@@ -20,7 +20,7 @@ import {
 import { EvmDerivedAddresses } from '@/constants/account';
 import { LocalStorageKey } from '@/constants/localStorage';
 import { STRING_KEYS } from '@/constants/localization';
-import { ENVIRONMENT_CONFIG_MAP, WALLETS_CONFIG_MAP } from '@/constants/networks';
+import { WALLETS_CONFIG_MAP } from '@/constants/networks';
 import {
   type DydxAddress,
   type EvmAddress,
@@ -114,7 +114,11 @@ export const useWalletConnection = () => {
     defaultValue: {} as EvmDerivedAddresses,
   });
   const { ready, authenticated } = usePrivy();
-  const { initOAuth } = useLoginWithOAuth();
+  const { login } = useLogin({
+    onError: () => {
+      setSelectedWalletError('Privy login failed');
+    },
+  });
   const { logout } = useLogout();
 
   const connectWallet = useCallback(
@@ -134,20 +138,9 @@ export const useWalletConnection = () => {
       try {
         if (!walletConnection) {
           throw new Error('Onboarding: No wallet connection found.');
-        } else if (walletConnection.type === WalletConnectionType.Email) {
-        } else if (walletConnection.type === WalletConnectionType.OAuth) {
+        } else if (walletConnection.type === WalletConnectionType.Privy) {
           if (!isConnectedWagmi && ready && !authenticated) {
-            const provider = wallets[walletType].oAuthProvider;
-            if (provider) {
-              try {
-                await initOAuth({
-                  provider,
-                });
-              } catch (error) {
-                setSelectedWalletError(error.message);
-                log('useWalletConnection/connectWallet', error);
-              }
-            }
+            login();
           }
         } else if (walletConnection.type === WalletConnectionType.CosmosSigner) {
           const cosmosWalletType = {
@@ -197,7 +190,7 @@ export const useWalletConnection = () => {
         walletConnectionType: walletConnection?.type,
       };
     },
-    [isConnectedGraz, signerGraz, isConnectedWagmi, signerWagmi, ready, authenticated, initOAuth]
+    [isConnectedGraz, signerGraz, isConnectedWagmi, signerWagmi, ready, authenticated, login]
   );
 
   const disconnectWallet = useCallback(async () => {
@@ -212,7 +205,6 @@ export const useWalletConnection = () => {
   // Wallet selection
 
   const [selectedWalletType, setSelectedWalletType] = useState<WalletType | undefined>(walletType);
-  const [oAuthHandled, setOAuthHandled] = useState(false);
   const [selectedWalletError, setSelectedWalletError] = useState<string>();
 
   async function disconnectSelectedWallet() {
@@ -225,53 +217,35 @@ export const useWalletConnection = () => {
 
   useEffect(() => {
     (async () => {
-      if (!oAuthHandled && ready) {
-        if (
-          selectedWalletType &&
-          getWalletConnection({ walletType: selectedWalletType })?.type ===
-            WalletConnectionType.OAuth &&
-          !authenticated
-        ) {
-          await disconnectSelectedWallet();
-        }
-      }
-      setOAuthHandled(true);
-    })();
-  }, [selectedWalletType, ready, authenticated, oAuthHandled, setOAuthHandled]);
-
-  useEffect(() => {
-    (async () => {
       setSelectedWalletError(undefined);
 
-      if (oAuthHandled) {
-        if (selectedWalletType) {
-          try {
-            const { walletType, walletConnectionType } = await connectWallet({
-              walletType: selectedWalletType,
-              isAccountConnected: Boolean(
-                evmAddress && evmDerivedAddresses[evmAddress]?.encryptedSignature
-              ),
-            });
+      if (selectedWalletType) {
+        try {
+          const { walletType, walletConnectionType } = await connectWallet({
+            walletType: selectedWalletType,
+            isAccountConnected: Boolean(
+              evmAddress && evmDerivedAddresses[evmAddress]?.encryptedSignature
+            ),
+          });
 
-            setWalletType(walletType);
-            setWalletConnectionType(walletConnectionType);
-          } catch (error) {
-            const { walletErrorType, message } = parseWalletError({
-              error,
-              stringGetter,
-            });
+          setWalletType(walletType);
+          setWalletConnectionType(walletConnectionType);
+        } catch (error) {
+          const { walletErrorType, message } = parseWalletError({
+            error,
+            stringGetter,
+          });
 
-            if (message) {
-              log('useWalletConnection/connectWallet', error, { walletErrorType });
-              setSelectedWalletError(message);
-            }
+          if (message) {
+            log('useWalletConnection/connectWallet', error, { walletErrorType });
+            setSelectedWalletError(message);
           }
-        } else {
-          await disconnectSelectedWallet();
         }
+      } else {
+        await disconnectSelectedWallet();
       }
     })();
-  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress, oAuthHandled]);
+  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress]);
 
   const selectWalletType = async (walletType: WalletType | undefined) => {
     if (selectedWalletType) {

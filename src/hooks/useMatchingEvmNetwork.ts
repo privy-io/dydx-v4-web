@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useSwitchNetwork as useSwitchNetworkPrivy } from '@privy-io/wagmi-connector';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 
-import { isPrivyWalletConnection } from '@/constants/wallets';
+import { WalletConnectionType } from '@/constants/wallets';
 
 import { useWalletConnection } from './useWalletConnection';
 
@@ -30,7 +30,7 @@ export const useMatchingEvmNetwork = ({
 
   const matchNetwork = useCallback(async () => {
     if (!isMatchingNetwork) {
-      if (isPrivyWalletConnection(walletConnectionType)) {
+      if (walletConnectionType === WalletConnectionType.Privy) {
         await switchNetworkAsyncPrivy?.(Number(chainId));
       } else {
         await switchNetworkAsync?.(Number(chainId));

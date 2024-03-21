@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react';
-
-import { useLoginWithEmail, usePrivy } from '@privy-io/react-auth';
 import styled, { AnyStyledComponent } from 'styled-components';
 
 import { AlertType } from '@/constants/alerts';
 import { ButtonAction, ButtonSize } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
-import { WalletType, wallets } from '@/constants/wallets';
+import { wallets } from '@/constants/wallets';
 
-import { useAccounts, useBreakpoints, useStringGetter, useURLConfigs } from '@/hooks';
+import { useAccounts, useStringGetter, useURLConfigs } from '@/hooks';
 import { useDisplayedWallets } from '@/hooks/useDisplayedWallets';
 
 import { breakpoints } from '@/styles';
@@ -56,18 +53,7 @@ export const ChooseWallet = () => {
             slotLeft={<Styled.Icon iconComponent={wallets[walletType].icon} />}
             size={ButtonSize.Small}
           >
-            {walletType === WalletType.Discord && 'Discord'}
-            {walletType === WalletType.Email && 'Email'}
-            {walletType === WalletType.Twitter && 'Twitter'}
-            {walletType === WalletType.Apple && 'Apple'}
-            {walletType === WalletType.Google && 'Google'}
-            {![
-              WalletType.Discord,
-              WalletType.Email,
-              WalletType.Twitter,
-              WalletType.Apple,
-              WalletType.Google,
-            ].includes(walletType) && stringGetter({ key: wallets[walletType].stringKey })}
+            {stringGetter({ key: wallets[walletType].stringKey })}
           </Styled.WalletButton>
         ))}
       </Styled.Wallets>

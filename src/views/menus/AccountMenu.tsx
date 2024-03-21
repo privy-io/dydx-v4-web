@@ -12,7 +12,7 @@ import {
   type StringGetterFunction,
   TOOLTIP_STRING_KEYS,
 } from '@/constants/localization';
-import { DydxChainAsset, wallets } from '@/constants/wallets';
+import { DydxChainAsset, WalletType, wallets } from '@/constants/wallets';
 
 import {
   useAccounts,
@@ -108,7 +108,7 @@ export const AccountMenu = () => {
               </WithTooltip>
             </Styled.AddressRow>
             <Styled.AddressRow>
-              {walletType && (
+              {walletType && walletType !== WalletType.Privy && (
                 <Styled.SourceIcon>
                   <Styled.ConnectorIcon iconName={IconName.AddressConnector} />
                   <Icon iconComponent={wallets[walletType].icon as ElementType} />

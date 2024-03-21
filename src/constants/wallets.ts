@@ -36,8 +36,7 @@ import { DydxChainId, WALLETS_CONFIG_MAP } from './networks';
 export enum WalletConnectionType {
   CoinbaseWalletSdk = 'coinbaseWalletSdk',
   CosmosSigner = 'CosmosSigner',
-  Email = 'Email',
-  OAuth = 'OAuth',
+  Privy = 'Privy',
   InjectedEip1193 = 'injectedEip1193',
   WalletConnect2 = 'walletConnect2',
   TestWallet = 'TestWallet',
@@ -59,7 +58,6 @@ export enum WalletErrorType {
 type WalletConnectionTypeConfig = {
   name: string;
   wagmiConnectorId?: string;
-  isPrivy?: boolean;
 };
 
 export const walletConnectionTypes: Record<WalletConnectionType, WalletConnectionTypeConfig> = {
@@ -81,13 +79,8 @@ export const walletConnectionTypes: Record<WalletConnectionType, WalletConnectio
   [WalletConnectionType.TestWallet]: {
     name: 'TestWallet',
   },
-  [WalletConnectionType.Email]: {
-    name: 'Email',
-    isPrivy: true,
-  },
-  [WalletConnectionType.OAuth]: {
-    name: 'OAuth',
-    isPrivy: true,
+  [WalletConnectionType.Privy]: {
+    name: 'Privy',
   },
 };
 
@@ -112,11 +105,7 @@ export enum WalletType {
   WalletConnect2 = 'WALLETCONNECT_2',
   TestWallet = 'TEST_WALLET',
   OtherWallet = 'OTHER_WALLET',
-  Email = 'EMAIL',
-  Discord = 'DISCORD',
-  Twitter = 'TWITTER',
-  Google = 'GOOGLE',
-  Apple = 'APPLE',
+  Privy = 'PRIVY',
 }
 
 const WALLET_CONNECT_EXPLORER_RECOMMENDED_WALLETS = {
@@ -138,13 +127,6 @@ export const WALLET_CONNECT_EXPLORER_RECOMMENDED_IDS = Object.values(
   WALLET_CONNECT_EXPLORER_RECOMMENDED_WALLETS
 );
 
-enum OAuthProvider {
-  Discord = 'discord',
-  Twitter = 'twitter',
-  Google = 'google',
-  Apple = 'apple',
-}
-
 type WalletConfig = {
   type: WalletType;
   stringKey: string;
@@ -152,7 +134,6 @@ type WalletConfig = {
   connectionTypes: WalletConnectionType[];
   matchesInjectedEip1193?: (provider: ExternalProvider & any) => boolean;
   walletconnect2Id?: string;
-  oAuthProvider?: OAuthProvider;
 };
 
 export const wallets: Record<WalletType, WalletConfig> = {
@@ -293,39 +274,11 @@ export const wallets: Record<WalletType, WalletConfig> = {
     icon: GenericWalletIcon,
     connectionTypes: [WalletConnectionType.TestWallet],
   },
-  [WalletType.Email]: {
-    type: WalletType.Email,
-    stringKey: 'Email',
+  [WalletType.Privy]: {
+    type: WalletType.Privy,
+    stringKey: STRING_KEYS.TEST_WALLET,
     icon: GenericWalletIcon,
-    connectionTypes: [WalletConnectionType.Email],
-  },
-  [WalletType.Discord]: {
-    type: WalletType.Discord,
-    stringKey: 'Discord',
-    icon: Discord2Icon,
-    connectionTypes: [WalletConnectionType.OAuth],
-    oAuthProvider: OAuthProvider.Discord,
-  },
-  [WalletType.Twitter]: {
-    type: WalletType.Twitter,
-    stringKey: 'Twitter',
-    icon: TwitterIcon,
-    connectionTypes: [WalletConnectionType.OAuth],
-    oAuthProvider: OAuthProvider.Twitter,
-  },
-  [WalletType.Google]: {
-    type: WalletType.Google,
-    stringKey: 'Google',
-    icon: GoogleIcon,
-    connectionTypes: [WalletConnectionType.OAuth],
-    oAuthProvider: OAuthProvider.Google,
-  },
-  [WalletType.Apple]: {
-    type: WalletType.Apple,
-    stringKey: 'Apple',
-    icon: AppleIcon,
-    connectionTypes: [WalletConnectionType.OAuth],
-    oAuthProvider: OAuthProvider.Apple,
+    connectionTypes: [WalletConnectionType.Privy],
   },
 };
 
@@ -360,10 +313,6 @@ export type WithInjectedOkxWalletProvider = {
 export type WalletConnection = {
   type: WalletConnectionType;
   provider?: ExternalProvider;
-};
-
-export const isPrivyWalletConnection = (walletConnectionType?: WalletConnectionType) => {
-  return walletConnectionType && walletConnectionTypes[walletConnectionType]?.isPrivy;
 };
 
 // dYdX Chain wallets

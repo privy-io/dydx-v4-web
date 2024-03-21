@@ -14,7 +14,7 @@ import { ButtonSize } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { isMainnet } from '@/constants/networks';
 import { MAX_CCTP_TRANSFER_AMOUNT, MAX_PRICE_IMPACT, NumberSign } from '@/constants/numbers';
-import { isPrivyWalletConnection, type EvmAddress } from '@/constants/wallets';
+import { WalletType, type EvmAddress } from '@/constants/wallets';
 
 import { useAccounts, useDebounce, useStringGetter, useSelectedNetwork } from '@/hooks';
 import { useAccountBalance, CHAIN_DEFAULT_TOKEN_ADDRESS } from '@/hooks/useAccountBalance';
@@ -134,17 +134,15 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   }, [error]);
 
   const { walletType } = useAccounts();
-  const walletConnectionType = walletType ? getWalletConnection({ walletType })?.type : undefined;
-  const isPrivy = isPrivyWalletConnection(walletConnectionType);
 
   useEffect(() => {
-    if (isPrivy) {
+    if (walletType === WalletType.Privy) {
       abacusStateManager.setTransferValue({
         field: TransferInputField.exchange,
         value: 'coinbase',
       });
     }
-  }, [isPrivy]);
+  }, [walletType]);
 
   const onSelectNetwork = useCallback((name: string, type: 'chain' | 'exchange') => {
     if (name) {
