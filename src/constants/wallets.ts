@@ -25,6 +25,7 @@ import {
   WalletConnectIcon,
   Discord2Icon,
   TwitterIcon,
+  EmailIcon,
 } from '@/icons';
 
 import { isMetaMask } from '@/lib/wallet/providers';
@@ -277,7 +278,7 @@ export const wallets: Record<WalletType, WalletConfig> = {
   [WalletType.Privy]: {
     type: WalletType.Privy,
     stringKey: STRING_KEYS.TEST_WALLET,
-    icon: GenericWalletIcon,
+    icon: EmailIcon,
     connectionTypes: [WalletConnectionType.Privy],
   },
 };
