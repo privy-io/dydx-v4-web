@@ -11,6 +11,8 @@ import {
   CoinbaseIcon,
   Coin98Icon,
   GenericWalletIcon,
+  AppleIcon,
+  GoogleIcon,
   HuobiIcon,
   ImTokenIcon,
   KeplrIcon,
@@ -21,6 +23,8 @@ import {
   TokenPocketIcon,
   TrustWalletIcon,
   WalletConnectIcon,
+  Discord2Icon,
+  TwitterIcon,
 } from '@/icons';
 
 import { isMetaMask } from '@/lib/wallet/providers';
