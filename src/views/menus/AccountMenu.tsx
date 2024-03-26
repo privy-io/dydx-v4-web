@@ -63,8 +63,6 @@ export const AccountMenu = () => {
 
   const privy = usePrivy();
 
-  console.log(privy);
-
   const usdcBalance = freeCollateral?.current || 0;
 
   const onRecoverKeys = () => {
