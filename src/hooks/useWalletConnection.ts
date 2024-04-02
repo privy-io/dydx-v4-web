@@ -203,7 +203,7 @@ export const useWalletConnection = () => {
     if (isConnectedWagmi) await disconnectWagmi();
     if (isConnectedGraz) await disconnectGraz();
     if (authenticated) await logout();
-  }, [isConnectedGraz, isConnectedWagmi]);
+  }, [isConnectedGraz, isConnectedWagmi, authenticated, logout]);
 
   // Wallet selection
 
