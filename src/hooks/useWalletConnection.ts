@@ -117,6 +117,7 @@ export const useWalletConnection = () => {
   const { login } = useLogin({
     onError: (error) => {
       if (error !== 'exited_auth_flow') {
+        log('useWalletConnection/privy/useLogin', new Error(`Privy: ${error}`));
         setSelectedWalletError('Privy login failed');
       }
     },
@@ -156,7 +157,7 @@ export const useWalletConnection = () => {
           }
 
           if (!isConnectedGraz) {
-            connectGraz({
+            await connectGraz({
               chainInfo: DYDX_CHAIN_INFO,
               walletType: cosmosWalletType,
             });

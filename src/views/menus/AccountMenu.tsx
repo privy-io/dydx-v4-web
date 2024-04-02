@@ -131,18 +131,18 @@ export const AccountMenu = () => {
                 />
               </WithTooltip>
             </Styled.AddressRow>
-            <Styled.AddressRow>
-              {walletType && walletType !== WalletType.Privy && (
+            {walletType && walletType !== WalletType.Privy && (
+              <Styled.AddressRow>
                 <Styled.SourceIcon>
                   <Styled.ConnectorIcon iconName={IconName.AddressConnector} />
                   <Icon iconComponent={wallets[walletType].icon as ElementType} />
                 </Styled.SourceIcon>
-              )}
-              <Styled.Column>
-                <Styled.label>{stringGetter({ key: STRING_KEYS.SOURCE_ADDRESS })}</Styled.label>
-                <Styled.Address>{truncateAddress(evmAddress, '0x')}</Styled.Address>
-              </Styled.Column>
-            </Styled.AddressRow>
+                <Styled.Column>
+                  <Styled.label>{stringGetter({ key: STRING_KEYS.SOURCE_ADDRESS })}</Styled.label>
+                  <Styled.Address>{truncateAddress(evmAddress, '0x')}</Styled.Address>
+                </Styled.Column>
+              </Styled.AddressRow>
+            )}
             <Styled.Balances>
               <div>
                 <div>
